@@ -1,5 +1,7 @@
 import requests
 import math
+from api_key import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+
 
 from flask import Flask, render_template, session, request, make_response, jsonify, url_for, redirect
 from authlib.integrations.flask_client import OAuth
@@ -20,9 +22,6 @@ app.config['SECRET_KEY'] = "secretvietdish"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///vietdish_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # app.config['SQLALCHEMY_ECHO'] = True
-
-GOOGLE_CLIENT_ID = '803503292565-putgsp4p2c6adipt3ecs507q4ln6r1q7.apps.googleusercontent.com'
-GOOGLE_CLIENT_SECRET = 'c9zom14zSowL77aOltm05NgI'
 
 connect_db(app)
 
