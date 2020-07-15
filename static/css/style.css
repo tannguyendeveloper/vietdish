@@ -319,10 +319,10 @@ h1.title {
     cursor: pointer;
 }
 
-#unit-toggle {
+#unit-toggle, .recipe-labels {
     display: flex;
     align-items: flex-end;
-    justify-content: flex-end;
+    justify-content: center;
 }
 
 .ingdient-name,
@@ -419,6 +419,9 @@ h1.title {
     text-align: center;
 }
 
+.text-center {
+    text-align: center;
+}
 /* .ui.toast.success,
 .ui.toast.error,
 .ui.toast .content {
@@ -431,8 +434,12 @@ footer {
     background-color: #E6C454;
     width: 100%;
     align-self: flex-end;
-    position: absolute;
     bottom: 0;
+    text-align: center;
+    color: #ffffff;
+}
+footer a {
+    color: #ffffff;
 }
 
 @media only screen and (min-width: 280px) and (max-width: 400px) {
