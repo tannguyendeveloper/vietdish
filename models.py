@@ -18,7 +18,7 @@ class User(db.Model):
     __tablename__ = 'users'
     def __repr__(self):
         return f"<User id={self.id} name={self.name} email={self.email}>"
-    
+
     @staticmethod
     def is_current_user_authenticated():
         try:
@@ -45,7 +45,7 @@ class Review(db.Model):
     __tablename__ = 'reviews'
     def __repr__(self):
         return f"<Review id={self.id} user={self.user} recipe_id={self.recipe_id} rating={self.rating} date={self.created_date}>"
-    
+
     @staticmethod
     def get_recipe_reviews(args):
         order_by = Review.date_created if args.get('order_by') == 'date' else Review.rating
@@ -54,7 +54,7 @@ class Review(db.Model):
         else:
             ratings_query = Review.query.filter(Review.recipe_id == args.get('recipe_id')).filter(Review.rating == args.get('rating')).order_by(order_by).all()
         return True
-    
+
     @staticmethod
     def get_recipe_reviews_count_grouped_by_ids(recipe_ids):
         ratings_query = db.session.query(
@@ -75,7 +75,7 @@ class Review(db.Model):
             ratings[rating['id']] = dict(rating['data'])
         print(ratings)
         return ratings
-    
+
     @staticmethod
     def convert_review_count_list_to_dict(ratings_list):
         return dict({
@@ -114,4 +114,3 @@ class Favorite(db.Model):
     date = db.Column(DateTime(timezone=True), server_default=func.now())
     user = db.relationship('User', backref='favorites')
 
-    

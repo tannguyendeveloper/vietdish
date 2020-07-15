@@ -10,13 +10,20 @@ OFFSET = 24
 class Spoonacular:
 
     def get_recipes(self, page):
+        """Returns all recipes on specified Spoonacular page.
+
+        Parameters
+        ----------
+        page: Int
+            Page number to grab spoonacular recipes.
+        """
         offset = int(page) * OFFSET
         url = f"https://api.spoonacular.com/recipes/complexSearch?cuisine=vietnamese&number={PER_PAGE}&apiKey={API_KEY}&offset={offset}"
         response = requests.get(url)
         return response
 
     def get_recipes_by_ids(self, ids):
-        string_ids = ','.join(map(str, ids)) 
+        string_ids = ','.join(map(str, ids))
         url = f"https://api.spoonacular.com/recipes/informationBulk/?ids={string_ids}&apiKey={API_KEY}"
         response = requests.get(url)
         return response
