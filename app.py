@@ -60,7 +60,13 @@ def root():
 
 @app.route('/page/<page>')
 def page(page):
-    """ Renders page of recipes """
+    """ Renders page of recipes.
+
+    Parameters
+    ----------
+    page: Int
+        page number
+    """
     response = spoonacularConnection.get_recipes(str(page))
     response_json = response.json()
     recipes = response_json.get('results', [])
@@ -68,7 +74,16 @@ def page(page):
     reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
     pages = spoonacularConnection.num_of_pages(response_json.get('totalResults'))
     base_url = '/page/'
-    return render_template('list-recipes.html', recipes = recipes, page = page, pages = pages, base_url = base_url, args = {}, session = session, reviews=reviews)
+    return render_template(
+        'list-recipes.html',
+        recipes=recipes,
+        page=page,
+        pages=pages,
+        base_url=base_url,
+        args={},
+        session=session,
+        reviews=reviews
+    )
 
 
 @app.route('/search/')
@@ -77,14 +92,27 @@ def search():
     query = request.args.get('query')
     query_type = request.args.get('query_type')
     page = request.args.get('page', 1)
+
     response = spoonacularConnection.search(query, query_type, page)
     response_json = response.json()
+
     recipes = response_json.get('results', [])
     recipe_ids = get_ids_from_results(recipes)
+
     reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
     pages = spoonacularConnection.num_of_pages(response_json.get('totalResults'))
     base_url = f'/search/?query={query}&query_type={query_type}&page='
-    return render_template('list-recipes.html', recipes = recipes, page = page, pages = pages, base_url = base_url, args = request.args, session = session, reviews=reviews)
+
+    return render_template(
+        'list-recipes.html',
+        recipes=recipes,
+        page=page,
+        pages=pages,
+        base_url=base_url,
+        args=request.args,
+        session=session,
+        reviews=reviews
+    )
 
 
 @app.route('/recipes/<id>')
@@ -131,7 +159,7 @@ def favorites():
 
     favorite_recipes = spoonacularConnection.get_recipes_by_ids(recipe_ids).json() if recipe_ids and len(recipe_ids) > 0 else []
     reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
-    return render_template('list-favorites.html', 
+    return render_template('list-favorites.html',
         session = session,
         title='Favorites',
         base_url = base_url,
@@ -209,14 +237,17 @@ def add_review():
             db.session.commit()
             db.session.rollback()
             return make_response(jsonify(
-                {'review': {
-                    'id': existing_review.id,
-                    'user_id': user_id,
-                    'recipe_id': recipe_id,
-                    'rating': rating,
-                    'review_text': review_text
-                    },
-                'message': 'Review updated.'}), 200)
+                {
+                    'review': {
+                        'id': existing_review.id,
+                        'user_id': user_id,
+                        'recipe_id': recipe_id,
+                        'rating': rating,
+                        'review_text': review_text
+                        },
+                    'message': 'Review updated.'
+                }
+            ), 200)
         else:
             return make_response(jsonify({'rating': False, 'message': 'Missing required data.'}), 400)
     except:
@@ -264,7 +295,7 @@ def authorize():
         user = User(id=user_info['id'], name=user_info['name'], email=user_info['email'], picture=user_info['picture'])
         db.session.add(user)
         db.session.commit()
-    
+
     print(token, user_info)
     session['token'] = token
     session['user'] = user_info
