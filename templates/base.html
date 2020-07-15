@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>VietDish</title>
+        <link rel="stylesheet" href="/static/css/style.css"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,maximum-scale=1,minimum-scale=1,height=device-height,shrink-to-fit=no">
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.6/dist/semantic.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.6/dist/semantic.min.js"></script>
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="nav-wrapper">
+                <nav id="navigation" class="container">
+                    {% include 'menu.html' %}
+                </nav>
+            </div>
+            <div id="jumbotron" class="main-jumbotron">
+                <div class="container">
+                    <div id="site-title-container" class="site-title">
+                        <div id="main-jumbo-logo" class="logo">Viet<span class="dish">Dish</span></div>
+                        <p>Aggregated Vietnamese and Asian-Fusion Recipes.</p>
+                        <p class="small-text">Powered by <a href="https://spoonacular.com/food-api/" target="_blank">Spoonacular API</a></p>
+                    </div>
+                    <div class="ui hidden copact divider"></div>
+                    {% block search %}
+                    {% endblock %}
+                </div>
+            </div>
+            {% block content %}
+            {% endblock %}
+            <div class="ui hidden divider"></div>
+            {% if not session['user'] %}
+            {% include 'sign-up-modal.html' %}
+            {% endif %}
+            <script  src="/static/js/app.js" type="module"></script>
+            <footer>
+                <div class="container">
+                    Developed by: <a href="https://www.tannguyendeveloper.com" target="">Tan Nguyen</a>
+                </div>
+            </footer>
+        </div>
+        <!-- <script  src="/static/js/app.js" type="module"></script> -->
+    </body>
+</html>

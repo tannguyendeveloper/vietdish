@@ -1,0 +1,28 @@
+{% extends 'base-no-search.html' %}
+
+{% block search %}
+{% include 'search-component.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="ui segment container">
+
+        {% if recipes and recipes|length > 0 %}
+        <div id="recipe-grid" class="ui cards">
+            {% for recipe in recipes %}
+            {% include 'recipe-card.html' %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="ui segment no-listings-message">
+            <h2>Uh Oh!</h2>
+            <p>It doesn't look like you've added any favorite recipes yet! Save up to 100 recipes!</p>
+        </div>
+        {% endif %}
+        {% if pages and pages > 1 %}
+            {% include 'pagination.html' %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

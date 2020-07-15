@@ -1,0 +1,29 @@
+<form id="reviews-filter-form" style="position: relative;" data-recipe-id="{{recipe.id}}">
+    <label><i class="filter icon"></i> <strong>Filters</strong></label>
+    <div id="review-rating-filter" class="ui dropdown recipe-filter-dropdown" name="rating">
+        <input name="rating" type="hidden">
+        <div class="default text">Star Rating</div>
+        <i class="dropdown icon"></i>
+        <div class="menu">
+            <div class="item" data-value="all">All Reviews</div>
+            <div class="item" data-value="5"><i class=" yellow star icon"></i><i class=" yellow star icon"></i><i class=" yellow star icon"></i><i class=" yellow star icon"></i><i class=" yellow star icon"></i></div>
+            <div class="item" data-value="4"><i class=" yellow star icon"></i><i class=" yellow star icon"></i><i class=" yellow star icon"></i><i class=" yellow star icon"></i></div>
+            <div class="item" data-value="3"><i class=" yellow star icon"></i><i class=" yellow star icon"></i><i class=" yellow star icon"></i></div>
+            <div class="item" data-value="2"><i class=" yellow star icon"></i><i class=" yellow star icon"></i></div>
+            <div class="item" data-value="1"><i class=" yellow star icon"></i></div>
+        </div>
+    </div>
+    <div id="review-order-by" class="ui dropdown recipe-filter-dropdown" name="order_by">
+        <input name="order_by" type="hidden">
+        <div class="default text">Order By</div>
+        <i class="dropdown icon"></i>
+        <div class="menu">
+            <div class="item" data-value="date"><i class="calendar icon"></i> Date</div>
+            <div class="item" data-value="rating"><i class="yellow star icon"></i>Rating</div>
+        </div>
+    </div>
+    <button type="button" class="ui small compact button filter-reviews">Apply Filters</button>
+</form>
+<div class="ui divider"></div>
+<div id="recipe-reviews-container-{{recipe.id}}" data-recipe-id="{{recipe.id}}"">
+</div>

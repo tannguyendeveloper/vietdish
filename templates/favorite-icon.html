@@ -1,0 +1,5 @@
+<div class="favorite">
+    <i class="
+    {% if recipe.id in session.favorites %}red {% else %}grey {% endif %} heart icon {% if session['user'] %}favorite-toggle {% else %}sign-up-modal {% endif %}
+    " data-recipe-id="{{recipe.id}}"></i>
+</div>

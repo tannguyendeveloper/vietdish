@@ -1,0 +1,17 @@
+<div id="recipe-{{recipe.id}}" class="ui fluid card recipe-card">
+    <div class="image">
+        <a href="/recipes/{{recipe.id}}" class="recipe-card-image-link">
+            <img src="https://spoonacular.com/recipeImages/{{recipe.id}}-480x360.jpg" alt="{{recipe.title}}"/>
+        </a>
+    </div>
+    <div class="content">
+        <a href="/recipes/{{recipe.id}}" class="header recipe-card-title-link" title="{{recipe.title}}">{{recipe.title}}</a>
+    </div>
+    <div class="ui fitted divider"></div>
+    <div class="ui basic segment" style="padding-top: 0">
+        <div class="favorite-rating-container">
+            {% include 'favorite-icon.html'%}
+            {% include 'user-rating.html' %}
+        </div>
+    </div>
+</div>

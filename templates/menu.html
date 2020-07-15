@@ -1,0 +1,10 @@
+<ul id="nav-menu">
+        <li class="menu-left"><a href="/" class="ui basic button nav-button site-title"><span class="logo">Viet<span class="dish">Dish</span></span></a></li>
+    {% if session.user %}
+        <li><a href="/favorites" class="ui basic button nav-button"><i class="red heart icon"></i> Favorites</a></li>
+        <li><a href="/logout" class="ui basic button nav-button">Sign Out</button></a><li>
+    {% else %}
+        <li><button id="nav-sign-up-btn" class="ui button sign-up-modal">Sign Up</button></li>
+        <li><a href="/login" class="ui basic button nav-button">Sign In</a></li>
+    {% endif %}
+</ul>

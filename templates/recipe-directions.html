@@ -1,0 +1,32 @@
+{% set start = [1] %}
+<div class="ui labels ">
+    {% if recipe.cooking_times.prep %}<div class="ui label">Prep Time: {{recipe.cooking_times.prep}} min{% if recipe.cooking_times.prep > 0 %}s{% endif %}</div>{% endif %}
+    {% if recipe.cooking_times.cooking %}<div class="ui label">Cooking Time: {{recipe.cooking_times.cooking}} min{% if recipe.cooking_times.cooking > 0 %}s{% endif %}</div>{% endif %}
+    {% if recipe.cooking_times.total %}<div class="ui label">Total Time: {{recipe.cooking_times.total}} min{% if recipe.cooking_times.total > 0 %}s{% endif %}</div>{% endif %}
+    {% if recipe.servings%}<div class="ui label" data-prop="servings">Number of Servings: {{recipe.servings}}</div>{% endif %}
+</div>
+<div class="ui divider"></div>
+{% if recipe.instructions %}
+    {% for i in recipe.instructions %}
+    {% if i.name %}
+    <p><strong>{{i.name}}</strong></p>
+    {% endif %}
+
+    {% if i.steps %}
+    <ol id="recipe-directions" class="ui list">
+
+        {% for step in i.steps %}
+        <li class="item" value="{{start|length}}"}>
+            {{step.step}}
+            {% set start = start.append(1) %}
+        </li>
+        {% endfor %}
+
+    </ol>
+    {% endif %}
+    {% endfor %}
+
+    {% else %}
+    Find the complete recipe instructions at <a href="{{recipe.source.url}}" target="_blank" name="Recipe for {{recipe.title}} at {{recipe.source.name}}">{{recipe.source.name}}</a>    
+
+{% endif %}

@@ -1,0 +1,32 @@
+{% if reviews and reviews[recipe.id] %}
+{% set avg = reviews[recipe.id]['avg'] %}
+{% set count = reviews[recipe.id]['count'] %}
+{% set stars_1 = reviews[recipe.id]['ratings'][1] %}
+{% set stars_1_pct = (reviews[recipe.id]['ratings'][1]*100/count)|int ~ '%' %}
+
+{% set stars_2 = reviews[recipe.id]['ratings'][2] %}
+{% set stars_2_pct = (reviews[recipe.id]['ratings'][2]*100/count)|int ~ '%' %}
+
+{% set stars_3 = reviews[recipe.id]['ratings'][3] %}
+{% set stars_3_pct = (reviews[recipe.id]['ratings'][3]*100/count)|int ~ '%' %}
+
+{% set stars_4 = reviews[recipe.id]['ratings'][4] %}
+{% set stars_4_pct = (reviews[recipe.id]['ratings'][4]*100/count)|int ~ '%' %}
+
+{% set stars_5 = reviews[recipe.id]['ratings'][5] %}
+{% set stars_5_pct = (reviews[recipe.id]['ratings'][5]*100/count)|int ~ '%' %}
+
+{% endif %}
+{% if not count %}
+{% set count = 0 %}
+{% endif %}
+<span>
+    <div class="ui mini yellow star rating user-rating" data-rating="{{avg}}" data-max-rating="5" data-recipe-id="{{recipe.id}}"></div>
+    {% if count and count > 0 %}
+    <span class="reviews-popup-link-container" data-recipe-id="{{recipe.id}}"><span class="rating-avg">{{avg}} from </span><a class="reviews-popup-link" data-stars-1="{{stars_1}}" data-stars-1="{{stars_1}}" data-stars-2="{{stars_2}}" data-stars-3="{{stars_3}}"data-stars-4="{{stars_4}}" data-stars-5="{{stars_5}}" data-recipe-id="{{recipe.id}}">{{count}} reviews</a>
+    </span>
+    {% else %}
+    <span class="reviews-popup-link-container" data-recipe-id="{{recipe.id}}"><span class="rating-avg"></span><a class="reviews-popup-link" data-stars-1="{{stars_1}}" data-stars-1="{{stars_1}}" data-stars-2="{{stars_2}}" data-stars-3="{{stars_3}}"data-stars-4="{{stars_4}}" data-stars-5="{{stars_5}}" data-recipe-id="{{recipe.id}}">{{count}} reviews</a>
+    </span>
+    {% endif %}
+</span>

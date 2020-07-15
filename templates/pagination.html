@@ -1,0 +1,81 @@
+<div class="recipe-pagination">
+    <div class="ui compact menu">
+        
+        {# Go to first page #}
+            {% if page != 1 %}
+            <a {% if not page|int == 1 %}href="{{base_url}}1" {% endif %} class="{% if page|int == 1 %}disabled {% endif %}icon item" title="First page">
+                <i class="angle double left icon"></i>
+            </a>
+            {% else %}
+            <div class="disabled item">
+                <i class="angle double left icon"></i>
+            </div>
+            {% endif %}
+
+
+        {# Go to previous page #}
+            {% if pages > 1 and page|int > 1 %}
+                <a href="{{base_url}}{{ page|int -1 }}" class="item" title="Previous page">
+                    <i class="angle left icon"></i>
+                </a>
+                {% else %}
+                <div class="disabled item">
+                    <i class="angle left icon"></i>
+                </div>
+            {% endif %}
+
+        {# Page Selection #}
+            <div class="ui scrolling dropdown item recipe-pagination-dropdown" data-page={{page}}>
+                <span class="text">Page</span>
+                <i class="dropdown icon"></i>
+                <div class="menu">
+                    {% for _ in range(1, pages + 1) %}
+                        {% if _ > 5 and not session['user'] %}
+                        <div href="{{base_url}}{{_}}" class="item sign-up-modal">
+                            {{_}}
+                        </div>
+                        {% else %}
+                        <a href="{{base_url}}{{_}}" class="item">
+                            {{_}}
+                        </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+
+        {# Go to next page #}
+            {% if pages > 1 and page|int < pages %}
+                    {% if page|int >= 5 and not session['user'] %}
+                    <div class="item sign-up-modal" title="Next page">
+                        <i class="angle right icon"></i>
+                    </div>
+                    {% else %}
+                    <a href="{{base_url}}{{ page|int + 1 }}" class="item" title="Next page">
+                        <i class="angle right icon"></i>
+                    </a>
+                    {% endif %}
+                {% else %}
+                <div class="disabled item">
+                    <i class="angle right icon"></i>
+                </div>
+            {% endif %}
+        
+        {# Go to last page #}
+            {% if page|int != pages%}
+                {% if pages > 5 and not session['user'] %}
+                <div class="{% if page|int == pages %}disabled {% endif %}disabled icon item" title="Last page">
+                    <i class="angle double right icon"></i>
+                </div>
+                {% else %}
+                <a {% if not page|int == pages %}href="{{base_url}}{{pages}}" {% endif %} class="{% if page|int == pages %}disabled {% endif %}icon item sing-up-modal" title="Last page">
+                    <i class="angle double right icon"></i>
+                </a>
+                {% endif %}
+            {% else %}
+            <div class="disabled item">
+                <i class="angle double right icon"></i>
+            </div>
+            {% endif %}
+    </div>
+</div>

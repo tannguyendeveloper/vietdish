@@ -1,0 +1,12 @@
+<ul id="equipment-list">
+    {% for equipment in recipe.equipment %} 
+    <li class="equipment-list-item">
+        <div class="equipment-image-container">
+            {% if equipment.images['100'] %}<img src="{{equipment.images['100']}}" title="{{equipment.name}}" alt="{{equipment.name}}"/>{% endif %}
+        </div>
+        <div class="equipment-list-container">
+            <strong class="equipment-name">{{equipment.name|capitalize}}</strong>
+        </div>
+    </li>
+    {% endfor %}
+</ul>

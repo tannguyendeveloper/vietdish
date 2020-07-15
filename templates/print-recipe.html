@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            {{recipe.title}}
+        </title>
+    </head>
+    <body>
+        <h1>{{recipe.title}}</h1>
+        <p>Source: <strong>{{recipe.source.name}}</strong><br /><a href="{{recipe.source.url}}" title="{{recipe.source.name}}">{{recipe.source.url}}</a></p>
+        <hr />
+        <ul>
+        {% if recipe.cooking_times.prep %}<li>Prep Time: {{recipe.cooking_times.prep}} min{% if recipe.cooking_times.prep > 0 %}s{% endif %}</li>{% endif %}
+        {% if recipe.cooking_times.cooking %}<li>Cooking Time: {{recipe.cooking_times.cooking}} min{% if recipe.cooking_times.cooking > 0 %}s{% endif %}</li>{% endif %}
+        {% if recipe.cooking_times.total %}<li>Total Time: {{recipe.cooking_times.total}} min{% if recipe.cooking_times.total > 0 %}s{% endif %}</li>{% endif %}
+        {% if recipe.servings%}<li>Number of Servings: {{recipe.servings}}</li>{% endif %}
+        </ul>
+        <hr />
+        <h2>Ingredients</h2>
+        <table style="width: 75%">
+            <thead>
+                <td><strong>Ingredient</strong></td><td><strong>US Measurement</strong></td><td><strong>Metric Measurement</strong></td>
+            </thead>
+            {% for ingredient in recipe.ingredients %} 
+            <tr>
+                    <td>{{ingredient.name|capitalize}}</td><td>{{ ingredient.measures.us.amount}} {{ingredient.measures.us.unitLong}}</td><td>{% if not ingredient.measures.us.unitLong == ingredient.measures.metric.unitLong %}{{ ingredient.measures.metric.amount}} {{ ingredient.measures.metric.unitLong }} {% endif %}</td>
+            </tr>
+            {% endfor %}
+        <table>
+        <hr />
+        <h2>Directions</h2>
+        {% include 'recipe-directions.html' %}
+    </body>
+</html>

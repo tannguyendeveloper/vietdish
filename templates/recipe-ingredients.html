@@ -1,0 +1,32 @@
+<div class="ui form">
+    <div id="unit-toggle" class="inline fields">
+        <div class="field">
+          <div class="ui radio checkbox measurement-toggle">
+            <input type="radio" name="measurement" tabindex="0" class="hidden" value="us" checked>
+            <label>US</label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui radio checkbox measurement-toggle">
+            <input type="radio" name="measurement" tabindex="0" class="hidden" value="metric">
+            <label>Metric</label>
+          </div>
+        </div>
+    </div>
+</div>
+
+<div class="ui divider"></div>
+
+<ul id="ingredients-list">
+    {% for ingredient in recipe.ingredients %} 
+    <li class="ingredient-list-item">
+        <div class="ingredient-image-container">
+            {% if ingredient.image %}<img src="{{ingredient.image}}" title="{{ingredient.name}}" alt="{{ingredient.name}}"/>{% endif %}
+        </div>
+        <div class="ingredient-list-container">
+            <strong class="ingdient-name">{{ingredient.name|capitalize}}</strong>
+            <div><span class="ingredient-amount" data-us-amount="{{ingredient.measures.us.amount}}" data-metric-amount="{{ingredient.measures.metric.amount}}" data-us-unit="{{ingredient.measures.us.unitLong}}" data-metric-unit="{{ingredient.measures.metric.unitLong}}">{{ ingredient.measures.us.amount}} {{ingredient.measures.us.unitLong}}</span></div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>

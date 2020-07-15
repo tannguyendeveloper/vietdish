@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>VietDish</title>
+        <link rel="stylesheet" type="text/css" href="css/semantic/semantic.min.css">
+        <link rel="stylesheet" href="./css/style.css"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,maximum-scale=1,minimum-scale=1,height=device-height,shrink-to-fit=no">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" />
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+        </head>
+    <body>
+        <div class="wrapper">
+            <div class="nav-wrapper">
+                <nav id="navigation" class="container">
+                    <ul id="nav-menu">
+                        <li><button id="nav-sign-up-btn" class="ui button">Sign Up</button></li>
+                        <li><button id="nav-sign-in-btn" class="ui basic button">Sign In</button></li>
+                    </ul>
+                </nav>
+            </div>
+            <div id="" class="recipe-jumbotron"><div class="ui star rating" data-rating="4"></div>
+            </div>
+            <div class="main-content" style="margin-top: -10vh;">
+                <div id="recipe" class="ui segment fluid grid container">
+                    <div class="row">
+                        <div class="four wide column">
+                            <div id="recipe-main-image">
+                                <img src="https://spoonacular.com/recipeImages/696206-556x370.jpg" alt="" />
+                            </div>
+                        </div>
+                        <div class="fourteen wide column">
+                            <h1 data-prop="title">{{recipe.title}}</h1><div class="ui star rating" data-max-rating="5" data-rating="3"></div>
+                            <div class="" data-prop="sourceName">From <a href="http://www.eatingwell.com/recipes/meatball_banh_mi.html" target="_new">Eating Well</a></div>
+                            <div class="ui divider"></div>
+                            <div class="ui labels">
+                                <div class="ui label" data-prop="preparationMinutes">Prep Time: 50</div>
+                                <div class="ui label" data-prop="cookingMinutes">Cooking Time: 50</div>
+                                <div class="ui label" data-prop="servings">Number of Servings: 6</div>
+                            </div>
+                            <div class="ui divider"></div>
+                            <div data-prop="summary">You can never have too many main course recipes, so give Meatball Banh Mi a try. One serving contains <b>653 calories</b>, <b>31g of protein</b>, and <b>15g of fat</b>. For <b>$5.63 per serving</b>, this recipe <b>covers 54%</b> of your daily requirements of vitamins and minerals. This recipe is typical of Vietnamese cuisine. 396 people have made this recipe and would make it again. From preparation to the plate, this recipe takes about <b>50 minutes</b>. Head to the store and pick up ground pork, water chestnuts, basil, and a few other things to make it today. To use up the baguettes you could follow this main course with the <a href=\"https://spoonacular.com/recipes/baguette-and-butter-pudding-124539\">Baguette and Butter Pudding</a> as a dessert. It is a good option if you're following a <b>dairy free</b> diet. All things considered, we decided this recipe <b>deserves a spoonacular score of 100%</b>. This score is outstanding. Try <a href=\"https://spoonacular.com/recipes/pork-meatball-banh-mi-98252\">Pork Meatball Banh Mi</a>, <a href=\"https://spoonacular.com/recipes/lamb-meatball-banh-mi-82979\">Lamb Meatball Banh Mi</a>, and <a href=\"https://spoonacular.com/recipes/pork-meatball-banh-mi-150356\">Pork Meatball Banh Mi</a> for similar recipes.</div>
+                            <h2>Ingredients</h2>
+                            <div id="ingredients-list">
+                                <div class="ingredient">
+                                    <div class="ingredient-image-container">
+                                        <img src="https://spoonacular.com/cdn/ingredients_100x100/half-baguette.jpg" alt=""/>
+                                    </div>
+                                    <div class="" data-prop="name">
+                                        <div>Baguettes <div class="amount" data-measure-us="2" data-measure-metric="" data-unit-us="" data-unit-metric=""></div></div>
+                                        <div data-prop="meta">Whole-wheat, Cut into thirds</div>
+                                    </div>
+                                </div>
+                                <div class="ingredient">
+                                    <div class="ingredient-image-container">
+                                        <img src="https://spoonacular.com/cdn/ingredients_100x100/water-chestnuts.png" alt=""/>
+                                    </div>
+                                    <div class="" data-prop="name">
+                                        <div>canned water chestnuts <div class="amount" data-measure-us="2" data-measure-metric="226.796" data-unit-us="ounces" data-unit-metric="grams"></div></div>
+                                        <div data-prop="meta">Whole-wheat, Cut into thirds</div>
+                                    </div>
+                                </div>
+                                <div class="ingredient">
+                                    <div class="ingredient-image-container">
+                                        <img src="https://spoonacular.com/cdn/ingredients_100x100/sliced-carrot.png" alt=""/>
+                                    </div>
+                                    <div class="" data-prop="name">
+                                        <div>canned water chestnuts <div class="amount" data-measure-us="2" data-measure-metric="226.796" data-unit-us="ounces" data-unit-metric="grams"></div></div>
+                                        <div data-prop="meta">Whole-wheat, Cut into thirds</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ui divider"></div>
+                            <h2>Instructions</h2>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer>
+                <div class="container">
+                    
+                </div>
+            </footer>
+        </div>
+        <script src="./js/recipe.js"></script>
+    </body>
+</html>

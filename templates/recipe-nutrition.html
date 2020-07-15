@@ -1,0 +1,10 @@
+<p>* Percent Daily Values are based on a 2,000 calorie diet. Your daily values may be higher or lower depending on your calorie needs.</p>
+<div class="ui divider"></div>
+<ul id="recipe-nutrient-table">
+    {% for i in recipe.nutrients %}
+    <li class="item">
+        <div class="nutrient"><strong>{{i.title}}</strong> <span>{{i.amount}}{{i.unit}}</span></div>
+        <div class="daily-value"><strong>{{i.percentOfDailyNeeds}}%</strong></div>
+    </li>
+    {% endfor %}
+</ul>

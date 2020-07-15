@@ -1,0 +1,15 @@
+<div id="recipe-search" class="ui search mobile-hide">
+    <form id="recipe-search-form" action="/search/" method="GET" autocomplete="off">
+        <div class="ui fluid action input">
+            <input name="query" type="text" placeholder="Search..." value="{{args.query}}">
+            <select name="query_type" class="ui compact selection dropdown" value={{args.query_type}}>
+              <option value="titleMatch">By Recipe Title</option>
+              <option value="query">By Ingrendient</option>
+            </select>
+            <button class="ui icon button"><i class="search icon"></i></button>
+          </div>
+    </form>
+    <script>
+      $('select[name="query_type"]').dropdown('set selected', '{{args.query_type}}')
+    </script>
+</div>

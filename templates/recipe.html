@@ -1,0 +1,30 @@
+{% extends 'base-recipe.html' %}
+{% block content %}
+
+<div class="main-content">
+    <div class="ui segment container">
+        <div id="recipe" class="recipe-container">
+            <div id="recipe-main-image">
+                <img src="{{recipe.images.sizes['636']}}" alt="{{recipe.title}}">
+            </div>
+            <div class="recipe-actions">
+                {% include 'recipe-favorite-icon.html' %}
+                {% if recipe.instructions %}<a href="/recipes/{{recipe.id}}/print" target="_blank" title="Printable Directions for {{recipe.title}}"><i class="large print icon"></i></a>{% endif %}
+            </div>
+            <h1 class="title">{{recipe.title}}</h1>
+            <div class="recipe-links">
+                <div class="recipe-source-link">Source: <a href="{{recipe.source.url}}" target="_new" >{{recipe.source.name}}</a></div>
+            </div>
+            <div class="ui hidden divider"></div>
+            <div class="recipe-rating-container">
+                {% include 'recipe-user-rating.html' %}
+                <div class="ui hidden divider"></div>
+                <span>{% include 'add-review-link.html' %}</span>
+            </div>
+            <div class="ui hidden divider"></div>
+            {% include 'recipe-tab-menu.html' %}
+            {% include 'recipe-tab-sections.html' %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+<div data-tab="directions" class="ui active tab basic segment">
+  <div class="recipe-mobile-header">
+    <h2>Directions</h2>
+    <div class="ui divider"></div>
+  </div>
+  {% include 'recipe-directions.html' %}
+</div>
+<div data-tab="ingredients" class="ui tab basic segment">
+  <div class="recipe-mobile-header">
+    <h2>Ingredients</h2>
+    <div class="ui divider"></div>
+</div>  
+  
+  {% include 'recipe-ingredients.html' %}
+</div>
+{% if recipe.equipment %}
+<div data-tab="equipment" class="ui tab basic segment">
+  <div class="recipe-mobile-header">
+    <h2>Equipment</h2>
+    <div class="ui divider"></div>
+</div>  {% include 'recipe-equipment.html' %}
+</div>
+{% endif %}
+<div data-tab="nutrition" class="ui tab basic segment">
+  <div class="recipe-mobile-header">
+    <h2>Nutrition</h2>
+    <div class="ui divider"></div>
+</div>  {% include 'recipe-nutrition.html' %}
+</div>
+<div data-tab="reviews" class="ui tab basic segment">
+  <div class="recipe-mobile-header">
+    <h2>Reviews</h2>
+    <div class="ui divider"></div>
+</div>  {% include 'recipe-reviews.html' %}
+</div>

@@ -1,0 +1,584 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;900&display=swap');
+
+* {
+    padding: 0 0;
+    margin: 0 0;
+}
+
+body {
+    margin: 0 0;
+    padding: 0 0;
+    font-family: 'Nunito', sans-serif;
+    background: #DDD1BC;
+}
+
+.wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #DDD1BC;
+}
+
+.container {
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+    max-width: 1170px;
+    box-sizing: border-box;
+}
+
+.nav-wrapper {
+    background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.75) 100%);
+    position: absolute;
+    width: 100%;
+    top: 0;
+}
+
+h1 {
+    font-family: 'Nunito', sans-serif !important;
+    font-weight: 400 !important;
+}
+
+h2 {
+    font-family: 'Nunito', sans-serif !important;
+    font-weight: 400 !important;
+}
+
+p {
+    font-family: 'Nunito', sans-serif !important;
+}
+
+nav {
+
+}
+
+nav #nav-sign-up-btn {
+    background-color: #DBA000 !important;
+    box-shadow: none !important;
+}
+
+nav .ui.basic.button.nav-button {
+    color: #ffffff !important;
+    box-shadow: none;
+}
+
+nav .ui.basic.button.nav-button:hover,
+nav .ui.basic.button.nav-button:active,
+nav .ui.basic.button.nav-button:focus
+{
+    color: #DBA000 !important;
+    background: transparent !important;
+    box-shadow: none;
+}
+
+nav #nav-menu {
+    margin: 0 0;
+    padding: 0 0;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: .5em;
+    list-style-type: none;
+}
+
+nav #nav-menu li {
+    display: flex;
+    align-items: stretch;
+}
+
+nav #nav-menu .menu-left {
+    margin-right: auto;
+}
+
+nav #nav-menu .site-title {
+    font-size: 1.5rem;
+    line-height: 1rem;
+}
+
+.image a img {
+    width: 100%;
+    display: block;
+}
+
+.image a {
+    display: block;
+    margin: 0 0;
+    padding: 0 0;
+}
+
+
+#jumbotron.main-jumbotron {
+    background-image: url('/static/images/bkg.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 50vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+#jumbotron.recipe-jumbotron {
+    background-image: url('/static/images/bkg.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 30vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.site-title {
+    text-align: center;
+}
+
+.site-title .logo {
+    font-family: 'Playfair Display', serif !important;
+    font-weight: 700;
+    color: #ffc200;
+    text-shadow: 2px 2px 0px #000;
+}
+
+.site-title p {
+    color: #ffffff;
+    margin: 1em 0;
+    text-shadow: 1px 1px 0px #000;
+    font-size: 1.25rem;
+}
+
+.site-title p.small-text {
+    font-size: .75em;
+    margin : 0 0;
+}
+
+.site-title p {
+    margin-bottom : 0;
+}
+
+.page-title {
+    color: #ffffff;
+    margin: 1em 0;
+    text-shadow: 1px 1px 0px #000;
+}
+
+.align-center {
+    text-align: center;
+}
+
+.logo .dish {
+    font-style: italic;
+    font-weight: normal;
+    color: #ffffff;
+}
+
+#sign-up-modal .logo {
+    text-shadow: none;
+    font-size: 2rem;
+}
+
+#sign-up-modal .logo .dish {
+    font-style: italic;
+    font-weight: normal;
+    color: #333333;
+}
+
+#main-jumbo-logo {
+    font-size: 4.5rem;
+    line-height: 4.5rem;
+    margin-bottom: 1rem;
+}
+
+.main-content {
+    margin-top: -5vh;
+}
+
+#recipe-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 2rem;
+    row-gap: 2rem;
+}
+
+#recipe .recipe-mobile-header {
+    display: none;
+}
+
+#recipe-search {
+    display: block;
+    margin: 0 auto;
+    min-width: 300px;
+    max-width: 600px;
+}
+
+#search-icon-btn {
+    cursor: pointer;
+}
+
+.card .content a.header {
+    font-family: 'Nunito', sans-serif !important;
+    font-weight: 400 !important;
+}
+
+.mobile-show {
+    display: none;
+}
+
+#recipe-main-image {
+    width: 100%;
+    max-width: 240px;
+    margin: 0 auto;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+    border: 5px solid #ffffff;
+    top: -10vh;
+    margin-bottom: -5vh;
+}
+
+#recipe-main-image::after {
+    content: '';
+    display: block;
+    width: 100%;
+    padding-bottom: 100%;
+}
+
+#recipe-main-image img {
+    height: 100%;
+    position: absolute;
+    display: block;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%)
+}
+
+h1.title {
+    text-align: center;
+    margin: 0 0;
+}
+
+.recipe-source-link,
+.recipe-printable-link {
+    text-align: center;
+    margin: .5em 0;
+}
+
+#recipe .recipe-actions {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+}
+
+#recipe .recipe-rating-container {
+    text-align: center;
+}
+#recipe .recipe-rating-container .ui.rating.user-rating {
+    display: block;
+}
+#recipe .recipe-rating-container .reviews-popup-link-container {
+    text-align: center;
+}
+
+#recipe #recipe-tabs {
+    display: flext;
+    justify-content: center;
+}
+
+#recipe-directions .item {
+    line-height: 1.6rem;
+    margin-bottom: 1.6rem;
+}
+
+#ingredients-list,
+#equipment-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-column-gap: 1rem;
+    grid-row-gap: 2rem;
+}
+
+#ingredients-list .ingredient-list-item,
+#equipment-list .equipment-list-item {
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    grid-column-gap: 1rem;
+}
+
+#ingredients-list .ingredient-list-item .ingredient-image-container,
+#equipment-list .equipment-list-item .equipment-image-containers
+{
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+}
+
+.sign-up-modal,
+.review-link {
+    cursor: pointer;
+}
+
+#unit-toggle {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+.ingdient-name,
+.equipment-name {
+    text-transform: capitalize;
+}
+
+.ingredient-image-container img,
+.equipment-image-container img
+{
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+#recipe-nutrient-table {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 4em;
+    row-gap: 1em;
+    list-style-type: none !important;
+    width: 100%;
+}
+
+#recipe-nutrient-table .item {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+}
+
+#reviews-filter-form{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#reviews-filter-form > * {
+    margin: 0 1em;
+}
+.recipe-image-column,
+.mobile-recipe-image {
+    position: relative;
+}
+
+.recipe-image-column .favorite,
+.mobile-recipe-image .favorite{
+    position: absolute;
+    top: .5em;
+    right: .5em;
+    text-shadow: 1px 1px 3px #ffffff;
+}
+
+.breakdown-row {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-content: center;
+    align-items: center;
+}
+.favorite-rating-container {
+    position: relative;
+}
+.favorite-rating-container::after {
+    content: '';
+}
+
+.favorite-rating-container .favorite {
+    float: right;
+}
+
+.favorite-rating-container .ui.rating {
+    /* float: left; */
+}
+
+.favorite-toggle {
+    cursor: pointer;
+}
+
+.ui.rating.user-rating {
+    text-align: center;
+}
+.ui.segment.rating-content {
+    padding: 0 0;
+}
+.rating-count-percent {
+    margin-left: 3em;
+}
+.recipe-pagination {
+    display: block;
+    width: auto;
+    text-align: center;
+    margin: 1em 0 0 0;
+}
+
+.no-listings-message {
+    text-align: center;
+}
+
+/* .ui.toast.success,
+.ui.toast.error,
+.ui.toast .content {
+    color: #000;
+    background-color: #fff !important;
+} */
+
+footer {
+    display: block;
+    background-color: #E6C454;
+    width: 100%;
+    align-self: flex-end;
+    position: absolute;
+    bottom: 0;
+}
+
+@media only screen and (min-width: 280px) and (max-width: 400px) {
+    #ingredients-list,
+    #equipment-list {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+
+@media only screen and (max-width: 480px) {
+
+    #main-jumbo-logo {
+        font-size: 3rem;
+        line-height: 3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .site-title p {
+        font-size: 1rem;
+    }
+    
+    #recipe-search {
+        box-sizing: border-box;
+        margin: 0 1rem;
+    }
+
+    #recipe-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        row-gap: 1rem;
+    }
+
+    #recipe-grid .recipe-card .header {
+        text-align: center;
+        font-size: 1.125rem;
+    }
+
+    #recipe .title {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    #recipe #recipe-tabs {
+        display: none;
+    }
+
+    #recipe .recipe-image-column {
+        display: none;
+    }
+
+    #recipe .recipe-mobile-header {
+        display: block;
+    }
+
+    #recipe .ui.tab {
+        display: block;
+    }
+
+    #recipe .recipe-rating-container {
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+
+    .mobile-recipe-image {
+        display: block;
+    }
+
+    #recipe #unit-toggle {
+        justify-content: center;
+    }
+
+    #ingredients-list,
+    #equipment-list {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    #recipe-nutrient-table {
+        grid-template-columns: 1fr;
+    }
+
+    #reviews-filter-form {
+        flex-direction: column;
+    }
+
+    #reviews-filter-form > * {
+        margin: .5em .5em;
+    }
+
+    footer {
+        padding: 1rem 0;
+        justify-content: center;
+    }
+
+}
+
+@media only screen and (min-width: 481px) and (max-width: 768px) {
+
+    #recipe-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    #recipe .recipe-image-column {
+        display: none;
+    }
+
+    #recipe .recipe-mobile-header {
+        display: block;
+    }
+
+    .recipe-image-column {
+        display: none;
+    }
+
+    .mobile-recipe-image {
+        display: block;
+    }
+
+    #recipe-tabs {
+        display: none;
+    }
+
+    #recipe .ui.tab {
+        display: block;
+    }
+
+    #recipe #unit-toggle {
+        justify-content: center;
+    }
+
+    #ingredients-list,
+    #equipment-list {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    #recipe-nutrient-table {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media only screen and (min-width: 801px) and (max-width: 990px) {
+    #recipe-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 1rem;
+        row-gap: 1rem;
+    }
+}
