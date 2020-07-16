@@ -176,7 +176,7 @@ def toggle_favorite():
 
 @app.route('/api/reviews/', methods = ['POST'])
 def add_review():
-    """ Add a user rating for a recipe """
+    """ Add a user review for a recipe """
     try:
         authenticated_user_id = User.is_current_user_authenticated()
         user_id = session['user']['id']
@@ -201,7 +201,7 @@ def add_review():
                     },
                 'message': 'Review added successfully.'}), 200)
 
-        # remove favorite if it already exists
+        # update review if it already exists
         elif user_id == authenticated_user_id and recipe_id and review_text and existing_review:
             existing_review.rating = rating
             existing_review.review_text = review_text
@@ -228,15 +228,19 @@ def get_reviews(recipe_id):
     if not request.args.get('count') == 'true':
         args = dict(request.args)
         args['recipe_id'] = recipe_id
-        Review.get_recipe_reviews(args)
-        return make_response(jsonify({'rating': True}), 200)
+        reviews = Review.get_recipe_reviews(args)
+        print(reviews)
+        if reviews:
+            return make_response(jsonify(reviews), 200)
+        else:
+            return make_response(jsonify({'reviews': False, 'message': 'No reviews found.'}), 200)
     else:
         reviews = Review.get_recipe_reviews_count_grouped_by_ids([int(recipe_id)])
         print(reviews)
         if reviews and reviews[int(recipe_id)]:
             return make_response(jsonify({'review': reviews[int(recipe_id)] if reviews[int(recipe_id)] else False }), 200)
         else:
-            return make_response(jsonify({'review': False, 'message': 'No reviews' }), 200)
+            return make_response(jsonify({'review': False, 'message': 'No reviews found.' }), 200)
 
 ### User Sign In, Auhorize, Logout routes ###
 

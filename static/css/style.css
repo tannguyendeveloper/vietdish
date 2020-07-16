@@ -192,6 +192,7 @@ nav #nav-menu .site-title {
 
 .main-content {
     margin-top: -5vh;
+    flex: 1;
 }
 
 #recipe-grid {

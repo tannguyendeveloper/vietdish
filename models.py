@@ -44,20 +44,51 @@ class User(db.Model):
 class Review(db.Model):
     __tablename__ = 'reviews'
     def __repr__(self):
-        return f"<Review id={self.id} user={self.user} recipe_id={self.recipe_id} rating={self.rating} date={self.created_date}>"
+        return f"<Review id={self.id} user={self.user} recipe_id={self.recipe_id} rating={self.rating} review_text={self.review_text} date_created={self.date_created} date_updated={self.date_updated}>"
     
     @staticmethod
     def get_recipe_reviews(args):
+        page = args.get('page',1)
         order_by = Review.date_created if args.get('order_by') == 'date' else Review.rating
         if args.get('rating') == 'all':
-            ratings_query = Review.query.filter(Review.recipe_id == args.get('recipe_id')).order_by(order_by).all()
+            reviews_query = Review.query.filter(Review.recipe_id == args.get('recipe_id')).order_by(order_by).paginate(page=page, max_per_page=20, error_out=False)
         else:
-            ratings_query = Review.query.filter(Review.recipe_id == args.get('recipe_id')).filter(Review.rating == args.get('rating')).order_by(order_by).all()
-        return True
+            reviews_query = Review.query.filter(Review.recipe_id == args.get('recipe_id'), Review.rating == args.get('rating')).order_by(order_by).paginate(page=page, max_per_page=20, error_out=False)
+        if len(reviews_query.items) > 0:
+            reviews = Review.map_reviews_to_dict(reviews_query.items)
+            response = {
+                'total_reviews': reviews_query.total,
+                'reviews': reviews,
+                'current_page': reviews_query.page,
+                'next': reviews_query.page + 1 if reviews_query.has_next else False,
+                'pages': reviews_query.pages,
+            }
+        else:
+            response = False
+        return response
+
+    @staticmethod
+    def map_reviews_to_dict(reviews_list):
+        items = []
+        for item in reviews_list:
+            print(item)
+            items.append({
+                'id': item.id,
+                'user': {
+                    'id': item.user.id,
+                    'name': item.user.name,
+                    'picture': item.user.picture
+                },
+                'rating': item.rating,
+                'review_text': item.review_text,
+                'date_created': item.date_created,
+                'date_updated': item.date_updated
+            })
+        return items
     
     @staticmethod
     def get_recipe_reviews_count_grouped_by_ids(recipe_ids):
-        ratings_query = db.session.query(
+        reviews_query = db.session.query(
             (Review.recipe_id),
             func.avg(Review.rating),
             func.count(Review.recipe_id),
@@ -69,15 +100,15 @@ class Review(db.Model):
             .group_by(Review.recipe_id)\
             .filter(Review.recipe_id.in_(recipe_ids))\
             .all()
-        ratings_query = (map(Review.convert_review_count_list_to_dict, ratings_query))
+        reviews_query = (map(Review.map_review_count_list_to_dict, reviews_query))
         ratings = {}
-        for rating in ratings_query:
+        for rating in reviews_query:
             ratings[rating['id']] = dict(rating['data'])
         print(ratings)
         return ratings
     
     @staticmethod
-    def convert_review_count_list_to_dict(ratings_list):
+    def map_review_count_list_to_dict(ratings_list):
         return dict({
             'id': ratings_list[0],
             'data': {
