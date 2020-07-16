@@ -11,8 +11,6 @@ from spoonacular import Spoonacular, OFFSET
 from recipe import Recipe
 from models import db, connect_db, Review, User, Favorite
 
-from helpers import get_ids_from_results, get_recipe_ids_from_favorites
-
 app = Flask(__name__)
 app.config['ENV'] = 'development'
 app.config['DEBUG'] = True
@@ -48,9 +46,8 @@ def root():
     if response.status_code == 200:
         response_json = response.json()
         recipes = response_json.get('results', [])
-        recipe_ids = get_ids_from_results(recipes)
+        recipe_ids = Recipe.filter_ids(recipes)
         reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
-        print(reviews)
         pages = spoonacularConnection.num_of_pages(response_json.get('totalResults'))
         base_url = '/page/'
         return render_template('list-recipes.html', recipes = recipes, page = 1, base_url = base_url, pages = pages, args = {}, session = session, reviews=reviews)
@@ -64,7 +61,7 @@ def page(page):
     response = spoonacularConnection.get_recipes(str(page))
     response_json = response.json()
     recipes = response_json.get('results', [])
-    recipe_ids = get_ids_from_results(recipes)
+    recipe_ids = Recipe.filter_ids(recipes)
     reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
     pages = spoonacularConnection.num_of_pages(response_json.get('totalResults'))
     base_url = '/page/'
@@ -80,7 +77,7 @@ def search():
     response = spoonacularConnection.search(query, query_type, page)
     response_json = response.json()
     recipes = response_json.get('results', [])
-    recipe_ids = get_ids_from_results(recipes)
+    recipe_ids = Recipe.filter_ids(recipes)
     reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
     pages = spoonacularConnection.num_of_pages(response_json.get('totalResults'))
     base_url = f'/search/?query={query}&query_type={query_type}&page='
@@ -93,7 +90,6 @@ def recipe(id):
     response = spoonacularConnection.get_recipe(id)
     recipe = Recipe(response.json())
     reviews = Review.get_recipe_reviews_count_grouped_by_ids([int(id)])
-    print(reviews)
     return render_template('recipe.html', recipe = recipe, session = session, reviews = reviews)
 
 @app.route('/recipes/<id>/print')
@@ -117,7 +113,7 @@ def favorites():
     base_url = '/favorites/?page='
 
     favorites = Favorite.query.filter_by(user_id=user_id).all()
-    all_recipe_ids = get_recipe_ids_from_favorites(favorites)
+    all_recipe_ids = Favorite.filter_recipe_ids(favorites)
 
     pages = math.ceil(len(all_recipe_ids) / OFFSET) if len(all_recipe_ids) > 0 else 1
 
@@ -187,7 +183,6 @@ def add_review():
         existing_review = Review.query.filter_by(user_id=user_id, recipe_id=recipe_id).first()
         if user_id == authenticated_user_id and recipe_id and review_text and not existing_review:
             new_review = Review(user_id=user_id, recipe_id=recipe_id, rating=rating, review_text=review_text)
-            print(new_review)
             db.session.add(new_review)
             db.session.commit()
             db.session.rollback()
@@ -225,18 +220,17 @@ def add_review():
 
 @app.route('/api/reviews/<recipe_id>/', methods = ['GET'])
 def get_reviews(recipe_id):
+    """ Get reviews by recipe id """
     if not request.args.get('count') == 'true':
         args = dict(request.args)
         args['recipe_id'] = recipe_id
         reviews = Review.get_recipe_reviews(args)
-        print(reviews)
         if reviews:
             return make_response(jsonify(reviews), 200)
         else:
             return make_response(jsonify({'reviews': False, 'message': 'No reviews found.'}), 200)
     else:
         reviews = Review.get_recipe_reviews_count_grouped_by_ids([int(recipe_id)])
-        print(reviews)
         if reviews and reviews[int(recipe_id)]:
             return make_response(jsonify({'review': reviews[int(recipe_id)] if reviews[int(recipe_id)] else False }), 200)
         else:
@@ -246,6 +240,7 @@ def get_reviews(recipe_id):
 
 @app.route('/login')
 def login():
+    """ renders the login page """
     for key in list(session.keys()):
         session.pop(key)
     google = oauth.create_client('google')
@@ -254,25 +249,25 @@ def login():
 
 @app.route('/authorize')
 def authorize():
+    """ renders the authorization page """
     google = oauth.create_client('google')
     token = google.authorize_access_token()
     resp = google.get('userinfo')
     user_info = resp.json()
 
-    ### Check the database for the user with the email address ##
+    ### Check the database for a user by id ##
     user = User.query.get(user_info['id'])
 
-    # if the email does not resist
+    # if the user does not resist
     if not User.query.get(user_info['id']):
         ### Add the user to the database
         user = User(id=user_info['id'], name=user_info['name'], email=user_info['email'], picture=user_info['picture'])
         db.session.add(user)
         db.session.commit()
     
-    print(token, user_info)
     session['token'] = token
     session['user'] = user_info
-    session['favorites']  = get_recipe_ids_from_favorites(user.favorites)
+    session['favorites']  = Favorite.filter_recipe_ids(user.favorites)
     db.session.rollback()
     # Save the user to the session
 
@@ -286,6 +281,7 @@ def authenticate_current_user():
 
 @app.route('/logout')
 def logout():
+    """ logout the user """
     for key in list(session.keys()):
         session.pop(key)
     return redirect('/')

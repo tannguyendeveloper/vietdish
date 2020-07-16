@@ -139,6 +139,10 @@ class Favorite(db.Model):
     def __repr__(self):
         return f"<Favorite id={self.id} user={self.user} recipe_id={self.user_id}>"
 
+    @staticmethod
+    def filter_recipe_ids(favorites):
+        return list(favorite.__dict__.get('recipe_id') for favorite in favorites)
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     recipe_id = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.String(255), db.ForeignKey('users.id'))

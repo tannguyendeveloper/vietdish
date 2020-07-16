@@ -1,6 +1,10 @@
 import json
 
 class Recipe:
+    @staticmethod
+    def filter_ids(results):
+        return list(result.get('id') for result in results)
+
     def __init__(self, data):
         self.id = data.get('id') 
         self.title = data.get('title')
