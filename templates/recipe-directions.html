@@ -27,6 +27,6 @@
     {% endfor %}
 
     {% else %}
-    Find the complete recipe instructions at <a href="{{recipe.source.url}}" target="_blank" name="Recipe for {{recipe.title}} at {{recipe.source.name}}">{{recipe.source.name}}</a>    
+    <p class="ui message align-center">Find the complete recipe instructions at <a href="{{recipe.source.url}}" target="_blank" name="Recipe for {{recipe.title}} at {{recipe.source.name}}">{{recipe.source.name}}</a></p>   
 
 {% endif %}

@@ -6,11 +6,11 @@
         <i class="dropdown icon"></i>
         <div class="menu">
             <div class="item" data-value="all">All Reviews</div>
-            <div class="item" data-value="5"><i class=" yellow star icon"></i><i class=" yellow star icon"></i><i class=" yellow star icon"></i><i class=" yellow star icon"></i><i class=" yellow star icon"></i></div>
-            <div class="item" data-value="4"><i class=" yellow star icon"></i><i class=" yellow star icon"></i><i class=" yellow star icon"></i><i class=" yellow star icon"></i></div>
-            <div class="item" data-value="3"><i class=" yellow star icon"></i><i class=" yellow star icon"></i><i class=" yellow star icon"></i></div>
-            <div class="item" data-value="2"><i class=" yellow star icon"></i><i class=" yellow star icon"></i></div>
-            <div class="item" data-value="1"><i class=" yellow star icon"></i></div>
+            <div class="item" data-value="5"><i class="small yellow star icon"></i><i class="small yellow star icon"></i><i class="small yellow star icon"></i><i class="small yellow star icon"></i><i class="small yellow star icon"></i></div>
+            <div class="item" data-value="4"><i class="small yellow star icon"></i><i class="small yellow star icon"></i><i class="small yellow star icon"></i><i class="small yellow star icon"></i></div>
+            <div class="item" data-value="3"><i class="small yellow star icon"></i><i class="small yellow star icon"></i><i class="small yellow star icon"></i></div>
+            <div class="item" data-value="2"><i class="small yellow star icon"></i><i class="small yellow star icon"></i></div>
+            <div class="item" data-value="1"><i class="small yellow star icon"></i></div>
         </div>
     </div>
     <div id="review-order-by" class="ui dropdown recipe-filter-dropdown" name="order_by">
@@ -26,4 +26,7 @@
 </form>
 <div class="ui divider"></div>
 <div id="recipe-reviews-container-{{recipe.id}}" data-recipe-id="{{recipe.id}}" class="ui basic comments segment">
+</div>
+<div id="load-more-button-container">
+    <button id="load-more-btn" class="ui red button" data-rating="all" data-order-by="date" data-page="1">Load Reviews</button>
 </div>

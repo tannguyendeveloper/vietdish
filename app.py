@@ -50,7 +50,16 @@ def root():
         reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
         pages = spoonacularConnection.num_of_pages(response_json.get('totalResults'))
         base_url = '/page/'
-        return render_template('list-recipes.html', recipes = recipes, page = 1, base_url = base_url, pages = pages, args = {}, session = session, reviews=reviews)
+        return render_template(
+            'list-recipes.html',
+            recipes = recipes,
+            page = 1,
+            pages = pages,
+            base_url = base_url,
+            args = {},
+            session = session,
+            reviews=reviews
+        )
     else:
         return render_template('error.html', session = session)
 
@@ -65,7 +74,16 @@ def page(page):
     reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
     pages = spoonacularConnection.num_of_pages(response_json.get('totalResults'))
     base_url = '/page/'
-    return render_template('list-recipes.html', recipes = recipes, page = page, pages = pages, base_url = base_url, args = {}, session = session, reviews=reviews)
+    return render_template(
+        'list-recipes.html',
+        recipes = recipes,
+        page = page,
+        pages = pages,
+        base_url = base_url,
+        args = {},
+        session = session,
+        reviews=reviews
+    )
 
 
 @app.route('/search/')
@@ -81,16 +99,34 @@ def search():
     reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
     pages = spoonacularConnection.num_of_pages(response_json.get('totalResults'))
     base_url = f'/search/?query={query}&query_type={query_type}&page='
-    return render_template('list-recipes.html', recipes = recipes, page = page, pages = pages, base_url = base_url, args = request.args, session = session, reviews=reviews)
+    return render_template(
+        'list-recipes.html', 
+        recipes = recipes,
+        page = page,
+        pages = pages,
+        base_url = base_url,
+        args = request.args,
+        session = session,
+        reviews=reviews
+    )
 
 
 @app.route('/recipes/<id>')
 def recipe(id):
     """ Renders recipe """
-    response = spoonacularConnection.get_recipe(id)
+    recipe_id = int(id)
+    response = spoonacularConnection.get_recipe(recipe_id)
     recipe = Recipe(response.json())
-    reviews = Review.get_recipe_reviews_count_grouped_by_ids([int(id)])
-    return render_template('recipe.html', recipe = recipe, session = session, reviews = reviews)
+    reviews = Review.get_recipe_reviews_count_grouped_by_ids([recipe_id])
+    user_id = session['user']['id'] if session.get('user') else False
+    user_has_reviewed_recipe = Review.if_user_has_review(user_id, recipe_id) if user_id and recipe_id else False
+    return render_template(
+        'recipe.html',
+        recipe = recipe,
+        session = session,
+        reviews = reviews,
+        user_review = user_has_reviewed_recipe
+    )
 
 @app.route('/recipes/<id>/print')
 def recipe_print(id):
@@ -154,7 +190,7 @@ def toggle_favorite():
             db.session.flush()
             session['favorites'].append(int(recipe_id))
             session.modified = True
-            return make_response(jsonify({'favorite': True, 'message': 'Favorite added.'}), 200)
+            return make_response(jsonify({'data': True, 'message': 'Favorite added.'}), 200)
 
         # remove favorite if it already exists
         elif authenticated_user_id and recipe_id and existing_favorite:
@@ -163,10 +199,10 @@ def toggle_favorite():
             db.session.flush()
             session['favorites'].remove(int(recipe_id))
             session.modified = True
-            return make_response(jsonify({'favorite': False, 'message': 'Favorite removed'}), 200)
+            return make_response(jsonify({'data': False, 'message': 'Favorite removed'}), 200)
 
         else:
-            return make_response(jsonify({'message': 'Missing required data'}), 400)
+            return make_response(jsonify({'data': False, 'message': 'Missing required data'}), 400)
     except:
         return make_response(jsonify({'message': 'User not logged in'}), 400)
 
@@ -187,7 +223,7 @@ def add_review():
             db.session.commit()
             db.session.rollback()
             return make_response(jsonify(
-                {'review': {
+                {'data': {
                     'id': new_review.id,
                     'user_id': user_id,
                     'recipe_id': recipe_id,
@@ -213,28 +249,32 @@ def add_review():
                     },
                 'message': 'Review updated.'}), 200)
         else:
-            return make_response(jsonify({'rating': False, 'message': 'Missing required data.'}), 400)
+            return make_response(jsonify({'data': False, 'message': 'Missing required data.'}), 400)
     except:
-        return make_response(jsonify({'rating': False, 'message': 'User not logged in.'}), 400)
+        return make_response(jsonify({'data': False, 'message': 'User not logged in.'}), 400)
 
 
 @app.route('/api/reviews/<recipe_id>/', methods = ['GET'])
 def get_reviews(recipe_id):
     """ Get reviews by recipe id """
-    if not request.args.get('count') == 'true':
+    if not request.args.get('count') == 'true' and not request.args.get('current_user') == 'true':
         args = dict(request.args)
         args['recipe_id'] = recipe_id
         reviews = Review.get_recipe_reviews(args)
         if reviews:
             return make_response(jsonify(reviews), 200)
         else:
-            return make_response(jsonify({'reviews': False, 'message': 'No reviews found.'}), 200)
+            return make_response(jsonify({'data': False, 'message': 'No reviews found.'}), 200)
+    elif request.args.get('current_user') == 'true' and not request.args.get('count'):
+        user_id = session['user']['id']
+        review = Review.get_user_review(user_id, recipe_id)
+        return make_response(jsonify({'data': review }), 200)
     else:
         reviews = Review.get_recipe_reviews_count_grouped_by_ids([int(recipe_id)])
         if reviews and reviews[int(recipe_id)]:
-            return make_response(jsonify({'review': reviews[int(recipe_id)] if reviews[int(recipe_id)] else False }), 200)
+            return make_response(jsonify({'data': reviews[int(recipe_id)] if reviews[int(recipe_id)] else False }), 200)
         else:
-            return make_response(jsonify({'review': False, 'message': 'No reviews found.' }), 200)
+            return make_response(jsonify({'data': False, 'message': 'No reviews found.' }), 200)
 
 ### User Sign In, Auhorize, Logout routes ###
 

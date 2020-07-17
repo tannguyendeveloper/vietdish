@@ -23,9 +23,13 @@ export default class ReviewModal {
         let content = document.createElement('div');
         content.classList.add('content');
 
+        let ratingContainer = document.createElement('div');
+        ratingContainer.classList.add('modal-rating-container');
+        ratingContainer.innerHTML = '<label><strong>Your Rating:</strong><label> ';
+
         let rating = document.createElement('span');
         rating.id = `recipe-rating-${this.id}`;
-        rating.classList.add('ui', 'star', 'rating' , 'review-rating');
+        rating.classList.add('ui', 'yellow', 'star', 'rating' , 'review-rating');
         rating.dataset.maxRating = 5;
 
         let divider = document.createElement('div');
@@ -50,7 +54,8 @@ export default class ReviewModal {
 
         actions.append(cancelBtn, approveBtn);
 
-        content.append(rating, divider, textArea);
+        ratingContainer.append(rating);
+        content.append(ratingContainer, divider, textArea);
         modal.append(header, content, actions);
 
         document.body.append(modal);
@@ -75,7 +80,12 @@ export default class ReviewModal {
             this.disableApproveButton();
         }
     }
-    async submitRating() {
+    async getReview() {
+        const responseObj =  await fetch(`/api/reviews/${this.id}/?current_user=true`);
+        const responseData = await responseObj.json();
+        return responseData.data ? responseData.data : false
+    }
+    async submitReview() {
         const recipe_id = this.recipe_id;
         console.log(this.tinymce.get(this.textAreaId))
         const data = {
@@ -98,7 +108,7 @@ export default class ReviewModal {
     }
     initRating() {
         const _this = this;
-        $(`#recipe-rating-${this.id}`).rating({
+        this.rating = $(`#recipe-rating-${this.id}`).rating({
             onRate: function() {
                 _this.rating = $(this).rating('get rating')
                 _this.checkValid();
@@ -126,7 +136,7 @@ export default class ReviewModal {
         const _this = this
         $(this.modal).modal({
             onApprove: async function() {
-                const responseObj = await _this.submitRating();
+                const responseObj = await _this.submitReview();
                 const response = await responseObj.json();
                 let icon;
                 if(_this.reviewPopup) _this.reviewPopup.updateReviewBreakdown();
@@ -153,6 +163,14 @@ export default class ReviewModal {
     }
     async show() {
         const isAuthenticated = await CurrentUser.redirectIfNotAuthenticated();
-        if(isAuthenticated) $(this.modal).modal('show')
+        const review = await this.getReview();
+        console.log(review)
+        if(review) {
+            this.rating.rating('set rating', review.rating);
+            this.tinymce.get(this.textAreaId).setContent(review.review_text)
+        }
+        if(isAuthenticated) { 
+            $(this.modal).modal('show')
+        }
     }
 }

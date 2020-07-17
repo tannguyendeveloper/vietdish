@@ -22,9 +22,9 @@
 {% endif %}
     <div class="ui massive yellow star rating user-rating" data-rating="{{avg}}" data-max-rating="5" data-recipe-id="{{recipe.id}}"></div>
     {% if count and count > 0 %}
-    <span class="reviews-popup-link-container" data-recipe-id="{{recipe.id}}"><span class="rating-avg">{{avg}} from </span><a href="/recipes/{{recipe.id}}/reviews" class="reviews-popup-link" data-stars-1="{{stars_1}}" data-stars-1="{{stars_1}}" data-stars-2="{{stars_2}}" data-stars-3="{{stars_3}}"data-stars-4="{{stars_4}}" data-stars-5="{{stars_5}}" data-recipe-id="{{recipe.id}}">{{count}} reviews</a>
+    <span class="reviews-popup-link-container" data-recipe-id="{{recipe.id}}"><span class="rating-avg">{{avg}} from </span><a href="/recipes/{{recipe.id}}?reviews=true#reviews" class="reviews-popup-link" data-stars-1="{{stars_1}}" data-stars-1="{{stars_1}}" data-stars-2="{{stars_2}}" data-stars-3="{{stars_3}}"data-stars-4="{{stars_4}}" data-stars-5="{{stars_5}}" data-recipe-id="{{recipe.id}}">{{count}} reviews</a>
     </span>
     {% else %}
-    <span class="reviews-popup-link-container" data-recipe-id="{{recipe.id}}"><span class="rating-avg"></span><a class="reviews-popup-link" data-stars-1="{{stars_1}}" data-stars-1="{{stars_1}}" data-stars-2="{{stars_2}}" data-stars-3="{{stars_3}}"data-stars-4="{{stars_4}}" data-stars-5="{{stars_5}}" data-recipe-id="{{recipe.id}}">{{count}} reviews</a>
+    <span class="reviews-popup-link-container" data-recipe-id="{{recipe.id}}"><span class="rating-avg"></span><a href="/recipes/{{recipe.id}}?reviews=true#reviews" class="reviews-popup-link" data-stars-1="{{stars_1}}" data-stars-1="{{stars_1}}" data-stars-2="{{stars_2}}" data-stars-3="{{stars_3}}"data-stars-4="{{stars_4}}" data-stars-5="{{stars_5}}" data-recipe-id="{{recipe.id}}">{{count}} reviews</a>
     </span>
     {% endif %}

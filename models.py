@@ -1,11 +1,12 @@
 import requests
 import time
+import datetime
 
 from flask import Flask, render_template, session, request, make_response, jsonify, url_for, redirect
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import DateTime
 from sqlalchemy.dialects.mysql import BIGINT
-from sqlalchemy.sql import func
+from sqlalchemy.sql import func, desc
 
 db = SQLAlchemy()
 
@@ -34,6 +35,7 @@ class User(db.Model):
         except:
             return False
 
+
     id = db.Column(db.String(255), primary_key=True, unique=True)
     name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False, unique=True)
@@ -48,15 +50,21 @@ class Review(db.Model):
     
     @staticmethod
     def get_recipe_reviews(args):
-        page = args.get('page',1)
-        order_by = Review.date_created if args.get('order_by') == 'date' else Review.rating
+        page = int(args.get('page',1))
+        print(page)
+        order_by = Review.date_created.desc() if args.get('order_by') == 'date' else Review.rating.desc()
         if args.get('rating') == 'all':
             reviews_query = Review.query.filter(Review.recipe_id == args.get('recipe_id')).order_by(order_by).paginate(page=page, max_per_page=20, error_out=False)
         else:
             reviews_query = Review.query.filter(Review.recipe_id == args.get('recipe_id'), Review.rating == args.get('rating')).order_by(order_by).paginate(page=page, max_per_page=20, error_out=False)
+        print(reviews_query)
         if len(reviews_query.items) > 0:
+            print(len(reviews_query.items))
             reviews = Review.map_reviews_to_dict(reviews_query.items)
             response = {
+                'recipe_id': args.get('recipe_id'),
+                'rating': args.get('rating'),
+                'order_by': args.get('order_by'),
                 'total_reviews': reviews_query.total,
                 'reviews': reviews,
                 'current_page': reviews_query.page,
@@ -69,22 +77,25 @@ class Review(db.Model):
 
     @staticmethod
     def map_reviews_to_dict(reviews_list):
-        items = []
-        for item in reviews_list:
-            print(item)
-            items.append({
-                'id': item.id,
-                'user': {
-                    'id': item.user.id,
-                    'name': item.user.name,
-                    'picture': item.user.picture
-                },
-                'rating': item.rating,
-                'review_text': item.review_text,
-                'date_created': item.date_created,
-                'date_updated': item.date_updated
-            })
-        return items
+        reviews = []
+        for review in reviews_list:
+            reviews.append(Review.translate_review_to_dict(review))
+        return reviews
+    
+    @staticmethod
+    def translate_review_to_dict(review):
+        return dict({
+            'id': review.id,
+            'user': {
+                'id': review.user.id,
+                'name': review.user.name,
+                'picture': review.user.picture
+            },
+            'rating': review.rating,
+            'review_text': review.review_text,
+            'date_created': review.date_created.strftime("%B %d, %Y"),
+            'date_updated': review.date_updated.strftime("%B %d, %Y") if review.date_updated else False
+        })
     
     @staticmethod
     def get_recipe_reviews_count_grouped_by_ids(recipe_ids):
@@ -104,7 +115,6 @@ class Review(db.Model):
         ratings = {}
         for rating in reviews_query:
             ratings[rating['id']] = dict(rating['data'])
-        print(ratings)
         return ratings
     
     @staticmethod
@@ -123,6 +133,23 @@ class Review(db.Model):
                 }
             }
         })
+
+    @staticmethod
+    def if_user_has_review(user_id, recipe_id):
+        try:
+            reviews_query = Review.query.filter(Review.user_id == user_id, Review.recipe_id == recipe_id).first()
+            return True if reviews_query.id else False
+        except:
+            return False
+
+    @staticmethod
+    def get_user_review(user_id, recipe_id):
+        try:
+            review = Review.query.filter(Review.user_id == user_id, Review.recipe_id == recipe_id).first()
+            return Review.translate_review_to_dict(review) if review.id else False
+        except:
+            return False
+
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     recipe_id = db.Column(db.Integer, nullable=False)

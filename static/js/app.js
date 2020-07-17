@@ -133,6 +133,7 @@ class VietDishApp {
             const recipeId = reviewsFilterForm.dataset.recipeId;
             console.log(reviewsFilterForm)
             const recipeReviewsListing = new RecipeReviewsListing(recipeId);
+            this.recipeReviewsListing = recipeReviewsListing
         }
     }
     initRecipeTabMenu() {
@@ -146,6 +147,11 @@ class VietDishApp {
                     }
                 }
             })
+            const urlParams = new URLSearchParams(window.location.search);
+            if(urlParams.get('reviews')) {
+                $(recipeTabMenu).tab('change tab', 'reviews')
+                $(this.recipeReviewsListing.filterBtn).click()
+            }
         }
     }
     initRecipeIngredientMeasurementToggle() {

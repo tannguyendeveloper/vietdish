@@ -1,14 +1,15 @@
 export default class RecipeReviewsListing {
     constructor(recipe_id) {
         this.recipe_id = recipe_id;
-        this.init();
         this.reviewsContainer = document.getElementById(`recipe-reviews-container-${this.recipe_id}`)
+        this.filterBtn = document.querySelector('.filter-reviews');
+        this.loadMoreBtn = document.querySelector('#load-more-btn');
+        this.init();
     }
     async getReviews(args) {
         let queryString = new URLSearchParams(args).toString();
         const responseObj = await fetch(`/api/reviews/${this.recipe_id}/?${queryString}`);
         const reviews = await responseObj.json();
-        console.log(reviews);
         return reviews;
     }
     renderReviewListing(review) {
@@ -41,35 +42,66 @@ export default class RecipeReviewsListing {
         rating.dataset.maxRating = 5
         $(rating).rating('disable');
 
-        metadata.append(rating)
+        const date = document.createElement('div');
+        date.classList.add('date');
+        date.innerHTML = review.date_created;
+
+        metadata.append(date)
 
         const text = document.createElement('div');
         text.classList.add('text');
         text.innerHTML = review.review_text;
 
-        content.append(author, metadata, text)
+        content.append(rating, author, metadata, text)
         reviewComment.append(avatar,content)
         return reviewComment
     }
+    loadMoreButton(data) {
+        if(data.current_page !== data.pages  && data.pages > 1) {
+            this.loadMoreBtn.dataset['rating'] = data.rating;
+            this.loadMoreBtn.dataset['order_by'] = data.order_by;
+            this.loadMoreBtn.dataset['page'] = parseInt(data.current_page) + 1;
+            this.loadMoreBtn.innerText = 'Load More Reviews';
+            this.loadMoreBtn.style.display = 'inline-block';
+        } else {
+            this.loadMoreBtn.dataset['rating'] = 'all';
+            this.loadMoreBtn.dataset['order_by'] = 'date';
+            this.loadMoreBtn.dataset['page'] = 1;
+            this.loadMoreBtn.innerText = 'Load Reviews';
+            this.loadMoreBtn.style.display = 'none';
+        }
+    }
+    async handleGetReviews(args) {
+        this.reviewsContainer.classList.add('loading');
+        const data = await this.getReviews(args);
+        if(data.reviews) {
+            for(const review of data.reviews) {
+                const comment = this.renderReviewListing(review)
+                this.reviewsContainer.append(comment);
+            }
+        } else {
+            this.reviewsContainer.innerHTML = '<p class="ui error message">No reviews found.</p>';
+        }
+        this.loadMoreButton(data);
+        this.reviewsContainer.classList.remove('loading');
+    }
     init() {
         const _this = this;
-        const filterBtn = document.querySelector('.filter-reviews');
-        filterBtn.addEventListener('click', async function() {
-            _this.reviewsContainer.classList.add('loading');
+        this.filterBtn.addEventListener('click', async function() {
             const args = {
                 rating: document.querySelector('input[name="rating"]').value,
                 order_by: document.querySelector('input[name="order_by"]').value
             }
-            const reviews = await _this.getReviews(args);
-            if(reviews) {
-                for(const review of reviews.reviews) {
-                    const comment = _this.renderReviewListing(review)
-                    _this.reviewsContainer.append(comment);
-                }
-            } else {
-
+            _this.reviewsContainer.innerHTML = '';
+            _this.handleGetReviews(args);
+        })
+        this.loadMoreBtn.addEventListener('click', async function() {
+            const args = {
+                rating: _this.loadMoreBtn.dataset.rating,
+                order_by: _this.loadMoreBtn.dataset.orderBy,
+                page: _this.loadMoreBtn.dataset.page
             }
-            _this.reviewsContainer.classList.remove('loading');
+            _this.handleGetReviews(args);
         })
         $('.recipe-filter-dropdown').dropdown();
         $('.recipe-filter-dropdown[name="rating"]').dropdown('set selected', 'all');

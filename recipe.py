@@ -3,6 +3,7 @@ import json
 class Recipe:
     @staticmethod
     def filter_ids(results):
+        """ Filters and returns the a list of recipe ids"""
         return list(result.get('id') for result in results)
 
     def __init__(self, data):

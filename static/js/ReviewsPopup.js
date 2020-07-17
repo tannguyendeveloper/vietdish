@@ -22,7 +22,7 @@ export default class ReviewsPopup {
         this.content.classList.add('loading')
         const response = await fetch(`/api/reviews/${this.recipe_id}/?count=true`);
         const responseJson = await response.json();
-        return responseJson.review ? responseJson.review : false;
+        return responseJson.data ? responseJson.data : false;
     }
     async updateReviewBreakdown() {
         const ratingObj = await this.getReviewBreakdown();

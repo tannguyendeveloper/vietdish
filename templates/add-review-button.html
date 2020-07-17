@@ -1,0 +1,7 @@
+<a class="ui red button review-link {% if session['user']%}add-review-modal {% else %}sign-up-modal {% endif %}" data-recipe-id="{{recipe.id}}">
+    {% if not user_review %}
+    <i class="plus icon"></i> Add a Review
+    {% else %}
+    <i class="edit icon"></i> Edit Your Review
+    {% endif %}
+</a>
