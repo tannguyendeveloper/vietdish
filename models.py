@@ -51,15 +51,12 @@ class Review(db.Model):
     @staticmethod
     def get_recipe_reviews(args):
         page = int(args.get('page',1))
-        print(page)
         order_by = Review.date_created.desc() if args.get('order_by') == 'date' else Review.rating.desc()
         if args.get('rating') == 'all':
             reviews_query = Review.query.filter(Review.recipe_id == args.get('recipe_id')).order_by(order_by).paginate(page=page, max_per_page=20, error_out=False)
         else:
             reviews_query = Review.query.filter(Review.recipe_id == args.get('recipe_id'), Review.rating == args.get('rating')).order_by(order_by).paginate(page=page, max_per_page=20, error_out=False)
-        print(reviews_query)
         if len(reviews_query.items) > 0:
-            print(len(reviews_query.items))
             reviews = Review.map_reviews_to_dict(reviews_query.items)
             response = {
                 'recipe_id': args.get('recipe_id'),
