@@ -18,7 +18,7 @@ app.config['ENV'] = 'development'
 # app.config['TESTING'] = True
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'vietdishsecret')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///vietdish_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL','postgresql:///vietdish_db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # app.config['SQLALCHEMY_ECHO'] = True
 
