@@ -1,3 +1,4 @@
+import os
 import requests
 import math
 from api_key import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
@@ -13,9 +14,9 @@ from models import db, connect_db, Review, User, Favorite
 
 app = Flask(__name__)
 app.config['ENV'] = 'development'
-app.config['DEBUG'] = True
-app.config['TESTING'] = True
-app.config['SECRET_KEY'] = "secretvietdish"
+# app.config['DEBUG'] = True
+# app.config['TESTING'] = True
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'vietdishsecret')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///vietdish_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
