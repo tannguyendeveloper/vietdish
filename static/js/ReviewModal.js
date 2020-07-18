@@ -145,7 +145,7 @@ export default class ReviewModal {
                     icon = 'green check icon'
                     $('.recipe-filter-dropdown[name="rating"]').dropdown('set selected', 'all');
                     $('.recipe-filter-dropdown[name="order_by"]').dropdown('set selected', 'date');
-                    $(_this.recipeReviewsListing.filterBtn).click()
+                    
                 } else {
                     icon = 'red ban icon'
                 }
@@ -155,7 +155,10 @@ export default class ReviewModal {
                         displayTime: 2000,
                         position: 'bottom right',
                         showProgress: 'top',
-                        showIcon: icon
+                        showIcon: icon,
+                        onHide: function() {
+                            if(responseObj.status == 200) $(_this.recipeReviewsListing.filterBtn).click()
+                        }
                     })
             },
             onHidden: function() {
