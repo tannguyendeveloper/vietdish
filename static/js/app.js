@@ -54,21 +54,21 @@ class VietDishApp {
             })
             const response = await responseObj.json()
             let favoriteIcon = document.querySelectorAll(`.favorite-toggle[data-recipe-id="${recipe_id}"]`)
-            let icon;
-            if(responseObj.status == 200 && response.favorite) {
+            let toastIcon;
+            if(responseObj.status == 200 && response.data) {
                 for(let icon of favoriteIcon) {
                     icon.classList.add('red')
                     icon.classList.remove('grey')
                 }
-                icon = 'green check icon'
-            } else if (responseObj.status == 200 && !response.favorite) {
+                toastIcon = 'green check icon'
+            } else if (responseObj.status == 200 && !response.data) {
                 for(let icon of favoriteIcon) {
                     icon.classList.remove('red')
                     icon.classList.add('grey')
                 }
-                icon = 'green check icon'
+                toastIcon = 'green check icon'
             } else {
-                icon = 'red ban icon'
+                toastIcon = 'red ban icon'
             }
             $('body')
                 .toast({
@@ -76,7 +76,7 @@ class VietDishApp {
                     displayTime: 2000,
                     position: 'bottom right',
                     showProgress: 'top',
-                    showIcon: icon
+                    showIcon: toastIcon
                 })
         }
         if(favoriteToggles) {
@@ -131,7 +131,6 @@ class VietDishApp {
         const reviewsFilterForm = document.getElementById('reviews-filter-form');
         if(reviewsFilterForm) {
             const recipeId = reviewsFilterForm.dataset.recipeId;
-            console.log(reviewsFilterForm)
             const recipeReviewsListing = new RecipeReviewsListing(recipeId);
             this.recipeReviewsListing = recipeReviewsListing
         }
@@ -143,7 +142,6 @@ class VietDishApp {
             $(recipeTabMenu).tab({
                 onFirstLoad: function(tab) {
                     if(tab === 'reviews') {
-                        console.log(tab, recipeId)
                     }
                 }
             })
