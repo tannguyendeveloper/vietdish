@@ -1,11 +1,12 @@
 import CurrentUser from './CurrentUser.js'
 
 export default class ReviewModal {
-    constructor(recipe_id) {
+    constructor(recipe_id, reviewListingComponent) {
         this.id = recipe_id
         this.textAreaId = `review-text-${this.id}`
         this.modal;
         this.modalLink = document.querySelector(`.add-review-modal[data-recipe-id="${recipe_id}"]`);
+        this.recipeReviewsListing = reviewListingComponent;
         this.render()
     }
     render() {
@@ -111,7 +112,6 @@ export default class ReviewModal {
                 _this.rating = $(this).rating('get rating')
                 _this.chars = _this.getTextAreaLength();
                 _this.checkValid();
-
             },
         })
     }
@@ -143,6 +143,9 @@ export default class ReviewModal {
                 if(responseObj.status == 200) {
                     _this.modalLink.innerText = 'Edit Your Review';
                     icon = 'green check icon'
+                    $('.recipe-filter-dropdown[name="rating"]').dropdown('set selected', 'all');
+                    $('.recipe-filter-dropdown[name="order_by"]').dropdown('set selected', 'date');
+                    $(_this.reviewListingComponent.filterBtn).click()
                 } else {
                     icon = 'red ban icon'
                 }

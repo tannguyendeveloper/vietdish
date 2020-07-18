@@ -17,8 +17,8 @@ class VietDishApp {
         this.initSignUpModal();
         this.initFavoritesToggle();
         this.initReviewsPopup();
-        this.initReviewModal();
         this.initRecipeReviewsListing();
+        this.initReviewModal();
         this.initRecipeTabMenu();
         this.initRecipeIngredientMeasurementToggle();
         this.initUserRatings();
@@ -118,7 +118,7 @@ class VietDishApp {
         const reviewModalLink = document.querySelector('.add-review-modal');
         if(reviewModalLink) {
             const recipeId = reviewModalLink.dataset.recipeId;
-            const modal = new ReviewModal(recipeId);
+            const modal = new ReviewModal(recipeId, this.recipeReviewsListing);
             modal.reviewPopup = this.reviewsPopups[`${recipeId}`] ? this.reviewsPopups[`${recipeId}`] : null;
             if(reviewModalLink) {
                 reviewModalLink.addEventListener('click', function(e) {
