@@ -87,13 +87,11 @@ export default class ReviewModal {
     }
     async submitReview() {
         const recipe_id = this.recipe_id;
-        console.log(this.tinymce.get(this.textAreaId))
         const data = {
             recipe_id: this.id,
             rating: this.rating,
             review_text: this.tinymce.get(this.textAreaId).getContent(),
         }
-        console.log(data)
         return await fetch('/api/reviews/', {
             method: 'POST',
             headers: {
@@ -108,11 +106,13 @@ export default class ReviewModal {
     }
     initRating() {
         const _this = this;
-        this.rating = $(`#recipe-rating-${this.id}`).rating({
+        $(`#recipe-rating-${this.id}`).rating({
             onRate: function() {
                 _this.rating = $(this).rating('get rating')
+                _this.chars = _this.getTextAreaLength();
                 _this.checkValid();
-            }
+
+            },
         })
     }
     initTinyMCE() {
@@ -164,13 +164,13 @@ export default class ReviewModal {
     async show() {
         const isAuthenticated = await CurrentUser.redirectIfNotAuthenticated();
         const review = await this.getReview();
-        console.log(review)
-        if(review) {
-            this.rating.rating('set rating', review.rating);
-            this.tinymce.get(this.textAreaId).setContent(review.review_text)
-        }
         if(isAuthenticated) { 
             $(this.modal).modal('show')
+        }
+        if(review) {
+            $(`#recipe-rating-${this.id}`).rating('set rating', review.rating);
+            this.rating = review.rating;
+            this.tinymce.get(this.textAreaId).setContent(review.review_text)
         }
     }
 }

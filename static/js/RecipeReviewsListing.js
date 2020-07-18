@@ -13,7 +13,6 @@ export default class RecipeReviewsListing {
         return reviews;
     }
     renderReviewListing(review) {
-        console.log(review);
         
         const reviewComment = document.createElement('div');
         reviewComment.classList.add('comment')
