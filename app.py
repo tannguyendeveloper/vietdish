@@ -69,23 +69,25 @@ def root():
 def page(page):
     """ Renders page of recipes """
     response = spoonacularConnection.get_recipes(str(page))
-    response_json = response.json()
-    recipes = response_json.get('results', [])
-    recipe_ids = Recipe.filter_ids(recipes)
-    reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
-    pages = spoonacularConnection.num_of_pages(response_json.get('totalResults'))
-    base_url = '/page/'
-    return render_template(
-        'list-recipes.html',
-        recipes = recipes,
-        page = page,
-        pages = pages,
-        base_url = base_url,
-        args = {},
-        session = session,
-        reviews=reviews
-    )
-
+    if response.status_code == 200:
+        response_json = response.json()
+        recipes = response_json.get('results', [])
+        recipe_ids = Recipe.filter_ids(recipes)
+        reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
+        pages = spoonacularConnection.num_of_pages(response_json.get('totalResults'))
+        base_url = '/page/'
+        return render_template(
+            'list-recipes.html',
+            recipes = recipes,
+            page = page,
+            pages = pages,
+            base_url = base_url,
+            args = {},
+            session = session,
+            reviews=reviews
+        )
+    else:
+        return render_template('error.html', session = session)
 
 @app.route('/search/')
 def search():
@@ -94,47 +96,62 @@ def search():
     query_type = request.args.get('query_type')
     page = request.args.get('page', 1)
     response = spoonacularConnection.search(query, query_type, page)
-    response_json = response.json()
-    recipes = response_json.get('results', [])
-    recipe_ids = Recipe.filter_ids(recipes)
-    reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
-    pages = spoonacularConnection.num_of_pages(response_json.get('totalResults'))
-    base_url = f'/search/?query={query}&query_type={query_type}&page='
-    return render_template(
-        'list-recipes.html', 
-        recipes = recipes,
-        page = page,
-        pages = pages,
-        base_url = base_url,
-        args = request.args,
-        session = session,
-        reviews=reviews
-    )
-
+    if response.status_code == 200:
+        response_json = response.json()
+        recipes = response_json.get('results', [])
+        recipe_ids = Recipe.filter_ids(recipes)
+        reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
+        pages = spoonacularConnection.num_of_pages(response_json.get('totalResults'))
+        base_url = f'/search/?query={query}&query_type={query_type}&page='
+        return render_template(
+            'list-recipes.html', 
+            recipes = recipes,
+            page = page,
+            pages = pages,
+            base_url = base_url,
+            args = request.args,
+            session = session,
+            reviews=reviews
+        )
+    else:
+        return render_template('error.html', session = session)
 
 @app.route('/recipes/<id>')
 def recipe(id):
     """ Renders recipe """
     recipe_id = int(id)
     response = spoonacularConnection.get_recipe(recipe_id)
-    recipe = Recipe(response.json())
-    reviews = Review.get_recipe_reviews_count_grouped_by_ids([recipe_id])
-    user_id = session['user']['id'] if session.get('user') else False
-    user_has_reviewed_recipe = Review.if_user_has_review(user_id, recipe_id) if user_id and recipe_id else False
-    return render_template(
-        'recipe.html',
-        recipe = recipe,
-        session = session,
-        reviews = reviews,
-        user_review = user_has_reviewed_recipe
-    )
+    if response.status_code == 200:
+        recipe = Recipe(response.json())
+        reviews = Review.get_recipe_reviews_count_grouped_by_ids([recipe_id])
+        user_id = session['user']['id'] if session.get('user') else False
+        user_has_reviewed_recipe = Review.if_user_has_review(user_id, recipe_id) if user_id and recipe_id else False
+        return render_template(
+            'recipe.html',
+            recipe = recipe,
+            session = session,
+            reviews = reviews,
+            user_review = user_has_reviewed_recipe
+        )
+    else:
+        return render_template('error.html', session = session)
 
 @app.route('/recipes/<id>/print')
 def recipe_print(id):
     """ Renders printable recipe """
     response = spoonacularConnection.get_recipe(id)
-    recipe = Recipe(response.json())
-    return render_template('print-recipe.html', recipe = recipe)
+    if response.status_code == 200:
+        recipe = Recipe(response.json())
+        return render_template('print-recipe.html', recipe = recipe)
+    else:
+        return render_template('error.html', session = session)
+
+@app.errorhandler(404)
+def handle_404(self):
+    return render_template('error_404.html', session = session)
+
+
+#### API Routes ####
 
 
 @app.route('/favorites/', methods=['GET'])
@@ -162,19 +179,24 @@ def favorites():
         offset_end = (OFFSET * page)
         recipe_ids = all_recipe_ids[offset_begin:offset_end]
 
-    favorite_recipes = spoonacularConnection.get_recipes_by_ids(recipe_ids).json() if recipe_ids and len(recipe_ids) > 0 else []
-    reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
-    return render_template('list-favorites.html', 
-        session = session,
-        title='Favorites',
-        base_url = base_url,
-        args = {},
-        pages = pages,
-        page = page,
-        recipes = favorite_recipes,
-        favorites = all_recipe_ids,
-        reviews = reviews
-    )
+    response = spoonacularConnection.get_recipes_by_ids(recipe_ids)
+    if response.status_code == 200:
+        favorite_recipes = response.json() if recipe_ids and len(recipe_ids) > 0 else []
+        
+        reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
+        return render_template('list-favorites.html', 
+            session = session,
+            title='Favorites',
+            base_url = base_url,
+            args = {},
+            pages = pages,
+            page = page,
+            recipes = favorite_recipes,
+            favorites = all_recipe_ids,
+            reviews = reviews
+        )
+    else:
+        return render_template('error.html', session = session)
 
 @app.route('/api/favorites/', methods = ['POST'])
 def toggle_favorite():

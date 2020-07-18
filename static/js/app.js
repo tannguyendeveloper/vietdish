@@ -13,6 +13,7 @@ class VietDishApp {
     constructor() {
         this.init();
     }
+
     init() {
         this.initSignUpModal();
         this.initFavoritesToggle();
@@ -176,4 +177,5 @@ class VietDishApp {
             $(pagination).dropdown('set selected', page);
         }
     }
+    
 }
