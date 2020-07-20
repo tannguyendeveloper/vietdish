@@ -43,50 +43,56 @@ spoonacularConnection = Spoonacular()
 @app.route('/')
 def root():
     """ Renders the homepage """
-    response = spoonacularConnection.get_recipes('1')
-    if response.status_code == 200:
-        response_json = response.json()
-        recipes = response_json.get('results', [])
-        recipe_ids = Recipe.filter_ids(recipes)
-        reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
-        pages = spoonacularConnection.num_of_pages(response_json.get('totalResults'))
-        base_url = '/page/'
-        return render_template(
-            'list-recipes.html',
-            recipes = recipes,
-            page = 1,
-            pages = pages,
-            base_url = base_url,
-            args = {},
-            session = session,
-            reviews=reviews
-        )
-    else:
+    try:
+        response = spoonacularConnection.get_recipes('1')
+        if response.status_code == 200:
+            response_json = response.json()
+            recipes = response_json.get('results', [])
+            recipe_ids = Recipe.filter_ids(recipes)
+            reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
+            pages = spoonacularConnection.num_of_pages(response_json.get('totalResults'))
+            base_url = '/page/'
+            return render_template(
+                'list-recipes.html',
+                recipes = recipes,
+                page = 1,
+                pages = pages,
+                base_url = base_url,
+                args = {},
+                session = session,
+                reviews=reviews
+            )
+        else:
+            return render_template('error.html', session = session)
+    except:
         return render_template('error.html', session = session)
 
 
 @app.route('/page/<page>')
 def page(page):
     """ Renders page of recipes """
-    response = spoonacularConnection.get_recipes(str(page))
-    if response.status_code == 200:
-        response_json = response.json()
-        recipes = response_json.get('results', [])
-        recipe_ids = Recipe.filter_ids(recipes)
-        reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
-        pages = spoonacularConnection.num_of_pages(response_json.get('totalResults'))
-        base_url = '/page/'
-        return render_template(
-            'list-recipes.html',
-            recipes = recipes,
-            page = page,
-            pages = pages,
-            base_url = base_url,
-            args = {},
-            session = session,
-            reviews=reviews
-        )
-    else:
+    try:
+        response = spoonacularConnection.get_recipes(str(page))
+        if response.status_code == 200:
+            response_json = response.json()
+            recipes = response_json.get('results', [])
+            recipe_ids = Recipe.filter_ids(recipes)
+            reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
+            pages = spoonacularConnection.num_of_pages(response_json.get('totalResults'))
+            base_url = '/page/'
+            return render_template(
+                'list-recipes.html',
+                recipes = recipes,
+                page = page,
+                pages = pages,
+                base_url = base_url,
+                args = {},
+                session = session,
+                reviews=reviews
+            )
+        else:
+            return render_template('error.html', session = session)
+    except:
         return render_template('error.html', session = session)
 
 @app.route('/search/')
@@ -95,55 +101,64 @@ def search():
     query = request.args.get('query')
     query_type = request.args.get('query_type')
     page = request.args.get('page', 1)
-    response = spoonacularConnection.search(query, query_type, page)
-    if response.status_code == 200:
-        response_json = response.json()
-        recipes = response_json.get('results', [])
-        recipe_ids = Recipe.filter_ids(recipes)
-        reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
-        pages = spoonacularConnection.num_of_pages(response_json.get('totalResults'))
-        base_url = f'/search/?query={query}&query_type={query_type}&page='
-        return render_template(
-            'list-recipes.html', 
-            recipes = recipes,
-            page = page,
-            pages = pages,
-            base_url = base_url,
-            args = request.args,
-            session = session,
-            reviews=reviews
-        )
-    else:
+    try:
+        response = spoonacularConnection.search(query, query_type, page)
+        if response.status_code == 200:
+            response_json = response.json()
+            recipes = response_json.get('results', [])
+            recipe_ids = Recipe.filter_ids(recipes)
+            reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
+            pages = spoonacularConnection.num_of_pages(response_json.get('totalResults'))
+            base_url = f'/search/?query={query}&query_type={query_type}&page='
+            return render_template(
+                'list-recipes.html', 
+                recipes = recipes,
+                page = page,
+                pages = pages,
+                base_url = base_url,
+                args = request.args,
+                session = session,
+                reviews=reviews
+            )
+        else:
+            return render_template('error.html', session = session)
+    except:
         return render_template('error.html', session = session)
 
 @app.route('/recipes/<id>')
 def recipe(id):
     """ Renders recipe """
     recipe_id = int(id)
-    response = spoonacularConnection.get_recipe(recipe_id)
-    if response.status_code == 200:
-        recipe = Recipe(response.json())
-        reviews = Review.get_recipe_reviews_count_grouped_by_ids([recipe_id])
-        user_id = session['user']['id'] if session.get('user') else False
-        user_has_reviewed_recipe = Review.if_user_has_review(user_id, recipe_id) if user_id and recipe_id else False
-        return render_template(
-            'recipe.html',
-            recipe = recipe,
-            session = session,
-            reviews = reviews,
-            user_review = user_has_reviewed_recipe
-        )
-    else:
+    try:
+        response = spoonacularConnection.get_recipe(recipe_id)
+        if response.status_code == 200:
+            recipe = Recipe(response.json())
+            reviews = Review.get_recipe_reviews_count_grouped_by_ids([recipe_id])
+            user_id = session['user']['id'] if session.get('user') else False
+            user_has_reviewed_recipe = Review.if_user_has_review(user_id, recipe_id) if user_id and recipe_id else False
+            return render_template(
+                'recipe.html',
+                recipe = recipe,
+                session = session,
+                reviews = reviews,
+                user_review = user_has_reviewed_recipe
+            )
+        else:
+            return render_template('error.html', session = session)
+    except:
         return render_template('error.html', session = session)
 
 @app.route('/recipes/<id>/print')
 def recipe_print(id):
     """ Renders printable recipe """
-    response = spoonacularConnection.get_recipe(id)
-    if response.status_code == 200:
-        recipe = Recipe(response.json())
-        return render_template('print-recipe.html', recipe = recipe)
-    else:
+    try:
+        response = spoonacularConnection.get_recipe(id)
+        if response.status_code == 200:
+            recipe = Recipe(response.json())
+            return render_template('print-recipe.html', recipe = recipe)
+        else:
+            return render_template('error.html', session = session)
+    except:
         return render_template('error.html', session = session)
 
 @app.errorhandler(404)
