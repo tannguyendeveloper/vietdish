@@ -29,9 +29,9 @@ class Recipe:
         }
         self.servings = data.get('servings')
         self.ingredients = parse_ingredients(data.get('extendedIngredients'))
-        self.directions = parse_directions(data.get('analyzedInstructions')[0].get('steps')) if data.get('analyzedInstructions') else False
-        self.instructions = parse_instructions(data.get('analyzedInstructions')) if data.get('analyzedInstructions') else False
-        self.equipment = parse_equipment_from_directions(self.instructions) if self.instructions else False
+        self.directions = parse_directions(data.get('analyzedInstructions')[0].get('steps')) if data.get('analyzedInstructions') else None
+        self.instructions = parse_instructions(data.get('analyzedInstructions')) if data.get('analyzedInstructions') else None
+        self.equipment = parse_equipment_from_directions(self.instructions) if self.instructions else None
         self.nutrients = data.get('nutrition').get('nutrients')
 
 def parse_ingredients(ingredients):

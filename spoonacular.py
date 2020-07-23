@@ -28,6 +28,9 @@ class Spoonacular:
         return response
 
     def num_of_pages(self, total_recipes):
+        # print(total_recipes, OFFSET)
+        # print(total_recipes / OFFSET)
+        # print(math.floor(total_recipes / OFFSET))
         return math.floor(total_recipes / OFFSET)
 
     def search(self, query, query_type, page):
