@@ -4,10 +4,10 @@ class Recipe:
     @staticmethod
     def filter_ids(results):
         """ Filters and returns the a list of recipe ids"""
-        return list(result.get('id') for result in results)
+        return [result.get('id') for result in results]
 
     def __init__(self, data):
-        self.id = data.get('id') 
+        self.id = data.get('id')
         self.title = data.get('title')
         self.source = {
             'name': data.get('sourceName', data.get('creditsText', '')),
@@ -25,20 +25,20 @@ class Recipe:
         self.cooking_times = {
             'prep': data.get('preparationMinutes'),
             'cooking': data.get('cookingMinutes'),
-            'total': data.get('readyInMinutes') if not data.get('readyInMinutes') == data.get('cookingMinutes') else data.get('preparationMinutes') + data.get('cookingMinutes')  
+            'total': data.get('readyInMinutes') if not data.get('readyInMinutes') == data.get('cookingMinutes') else data.get('preparationMinutes') + data.get('cookingMinutes')
         }
         self.servings = data.get('servings')
         self.ingredients = parse_ingredients(data.get('extendedIngredients'))
-        self.directions = parse_directions(data.get('analyzedInstructions')[0].get('steps')) if data.get('analyzedInstructions') else False
-        self.instructions = parse_instructions(data.get('analyzedInstructions')) if data.get('analyzedInstructions') else False
-        self.equipment = parse_equipment_from_directions(self.instructions) if self.instructions else False
+        self.directions = parse_directions(data.get('analyzedInstructions')[0].get('steps')) if data.get('analyzedInstructions') else None
+        self.instructions = parse_instructions(data.get('analyzedInstructions')) if data.get('analyzedInstructions') else None
+        self.equipment = parse_equipment_from_directions(self.instructions) if self.instructions else None
         self.nutrients = data.get('nutrition').get('nutrients')
 
 def parse_ingredients(ingredients):
     return list(map(parse_ingredient, ingredients)) if ingredients else []
 
 def parse_ingredient(ingredient):
-    image = f"https://spoonacular.com/cdn/ingredients_100x100/{ingredient.get('image')}" if ingredient.get('image') else ''  
+    image = f"https://spoonacular.com/cdn/ingredients_100x100/{ingredient.get('image')}" if ingredient.get('image') else ''
     return {
         'id': ingredient.get('id'),
         'name': ingredient.get('name').capitalize(),
@@ -98,4 +98,4 @@ def parse_equipment(equipment):
         'name': equipment.get('name'),
         'images': images
     }
-    
+

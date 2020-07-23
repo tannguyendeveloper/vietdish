@@ -52,16 +52,16 @@ def root():
         base_url = '/page/'
         return render_template(
             'list-recipes.html',
-            recipes = recipes,
-            page = 1,
-            pages = pages,
-            base_url = base_url,
-            args = {},
-            session = session,
+            recipes=recipes,
+            page=1,
+            pages=pages,
+            base_url=base_url,
+            args={},
+            session=session,
             reviews=reviews
         )
     else:
-        return render_template('error.html', session = session)
+        return render_template('error.html', session=session)
 
 
 @app.route('/page/<page>')
@@ -100,7 +100,7 @@ def search():
     pages = spoonacularConnection.num_of_pages(response_json.get('totalResults'))
     base_url = f'/search/?query={query}&query_type={query_type}&page='
     return render_template(
-        'list-recipes.html', 
+        'list-recipes.html',
         recipes = recipes,
         page = page,
         pages = pages,
@@ -118,14 +118,14 @@ def recipe(id):
     response = spoonacularConnection.get_recipe(recipe_id)
     recipe = Recipe(response.json())
     reviews = Review.get_recipe_reviews_count_grouped_by_ids([recipe_id])
-    user_id = session['user']['id'] if session.get('user') else False
-    user_has_reviewed_recipe = Review.if_user_has_review(user_id, recipe_id) if user_id and recipe_id else False
+    user_id = session['user']['id'] if session.get('user') else None
+    user_has_reviewed_recipe = Review.user_has_review(user_id, recipe_id) if user_id and recipe_id else False
     return render_template(
         'recipe.html',
-        recipe = recipe,
-        session = session,
-        reviews = reviews,
-        user_review = user_has_reviewed_recipe
+        recipe=recipe,
+        session=session,
+        reviews=reviews,
+        user_review=user_has_reviewed_recipe
     )
 
 @app.route('/recipes/<id>/print')
@@ -133,7 +133,7 @@ def recipe_print(id):
     """ Renders printable recipe """
     response = spoonacularConnection.get_recipe(id)
     recipe = Recipe(response.json())
-    return render_template('print-recipe.html', recipe = recipe)
+    return render_template('print-recipe.html', recipe=recipe)
 
 
 @app.route('/favorites/', methods=['GET'])
@@ -153,6 +153,7 @@ def favorites():
 
     pages = math.ceil(len(all_recipe_ids) / OFFSET) if len(all_recipe_ids) > 0 else 1
 
+    recipe_ids = []
     if page == 1:
         offset_end = (OFFSET * page)
         recipe_ids = all_recipe_ids[0:offset_end]
@@ -161,18 +162,18 @@ def favorites():
         offset_end = (OFFSET * page)
         recipe_ids = all_recipe_ids[offset_begin:offset_end]
 
-    favorite_recipes = spoonacularConnection.get_recipes_by_ids(recipe_ids).json() if recipe_ids and len(recipe_ids) > 0 else []
+    favorite_recipes = spoonacularConnection.get_recipes_by_ids(recipe_ids).json() if len(recipe_ids) > 0 else []
     reviews = Review.get_recipe_reviews_count_grouped_by_ids(recipe_ids)
-    return render_template('list-favorites.html', 
-        session = session,
+    return render_template('list-favorites.html',
+        session=session,
         title='Favorites',
-        base_url = base_url,
-        args = {},
-        pages = pages,
-        page = page,
-        recipes = favorite_recipes,
-        favorites = all_recipe_ids,
-        reviews = reviews
+        base_url=base_url,
+        args={},
+        pages=pages,
+        page=page,
+        recipes=favorite_recipes,
+        favorites=all_recipe_ids,
+        reviews=reviews
     )
 
 @app.route('/api/favorites/', methods = ['POST'])
@@ -182,25 +183,24 @@ def toggle_favorite():
         authenticated_user_id = User.is_current_user_authenticated()
         recipe_id = request.json.get('recipe_id')
         existing_favorite = Favorite.query.filter_by(user_id=authenticated_user_id, recipe_id=recipe_id).first()
-        # add if a favorite with the same user_id and recipe_id doesn't exist
-        if authenticated_user_id and recipe_id and not existing_favorite:
-            new_favorite = Favorite(user_id=authenticated_user_id, recipe_id=recipe_id)
-            db.session.add(new_favorite)
-            db.session.commit()
-            db.session.flush()
-            session['favorites'].append(int(recipe_id))
-            session.modified = True
-            return make_response(jsonify({'data': True, 'message': 'Favorite added.'}), 200)
-
-        # remove favorite if it already exists
-        elif authenticated_user_id and recipe_id and existing_favorite:
-            Favorite.query.filter_by(user_id=authenticated_user_id, recipe_id=recipe_id).delete()
-            db.session.commit()
-            db.session.flush()
-            session['favorites'].remove(int(recipe_id))
-            session.modified = True
-            return make_response(jsonify({'data': False, 'message': 'Favorite removed'}), 200)
-
+        if authenticated_user_id and recipe_id:
+            # remove favorite if it already exists
+            if existing_favorite:
+                Favorite.query.filter_by(user_id=authenticated_user_id, recipe_id=recipe_id).delete()
+                db.session.commit()
+                db.session.flush()
+                session['favorites'].remove(int(recipe_id))
+                session.modified = True
+                return make_response(jsonify({'data': False, 'message': 'Favorite removed'}), 200)
+            else:
+                # add if a favorite with the same user_id and recipe_id doesn't exist
+                new_favorite = Favorite(user_id=authenticated_user_id, recipe_id=recipe_id)
+                db.session.add(new_favorite)
+                db.session.commit()
+                db.session.flush()
+                session['favorites'].append(int(recipe_id))
+                session.modified = True
+                return make_response(jsonify({'data': True, 'message': 'Favorite added.'}), 200)
         else:
             return make_response(jsonify({'data': False, 'message': 'Missing required data'}), 400)
     except:
@@ -217,37 +217,42 @@ def add_review():
         review_text = request.json.get('review_text')
 
         existing_review = Review.query.filter_by(user_id=user_id, recipe_id=recipe_id).first()
-        if user_id == authenticated_user_id and recipe_id and review_text and not existing_review:
-            new_review = Review(user_id=user_id, recipe_id=recipe_id, rating=rating, review_text=review_text)
-            db.session.add(new_review)
-            db.session.commit()
-            db.session.rollback()
-            return make_response(jsonify(
-                {'data': {
-                    'id': new_review.id,
-                    'user_id': user_id,
-                    'recipe_id': recipe_id,
-                    'rating': rating,
-                    'review_text': review_text
-                    },
-                'message': 'Review added successfully.'}), 200)
-
-        # update review if it already exists
-        elif user_id == authenticated_user_id and recipe_id and review_text and existing_review:
-            existing_review.rating = rating
-            existing_review.review_text = review_text
-            db.session.add(existing_review)
-            db.session.commit()
-            db.session.rollback()
-            return make_response(jsonify(
-                {'review': {
-                    'id': existing_review.id,
-                    'user_id': user_id,
-                    'recipe_id': recipe_id,
-                    'rating': rating,
-                    'review_text': review_text
-                    },
-                'message': 'Review updated.'}), 200)
+        if (
+            user_id == authenticated_user_id and
+            recipe_id and
+            review_text and
+        ):
+            # update review if it already exists
+            if existing_review:
+                existing_review.rating = rating
+                existing_review.review_text = review_text
+                db.session.add(existing_review)
+                db.session.commit()
+                db.session.rollback()
+                return make_response(jsonify(
+                    {'review': {
+                        'id': existing_review.id,
+                        'user_id': user_id,
+                        'recipe_id': recipe_id,
+                        'rating': rating,
+                        'review_text': review_text
+                        },
+                    'message': 'Review updated.'}), 200)
+            else:
+                new_review = Review(user_id=user_id, recipe_id=recipe_id, rating=rating, review_text=review_text)
+                db.session.add(new_review)
+                db.session.commit()
+                db.session.rollback()
+                return make_response(jsonify(
+                    {'data': {
+                        'id': new_review.id,
+                        'user_id': user_id,
+                        'recipe_id': recipe_id,
+                        'rating': rating,
+                        'review_text': review_text
+                        },
+                    'message': 'Review added successfully.'}
+                ), 200)
         else:
             return make_response(jsonify({'data': False, 'message': 'Missing required data.'}), 400)
     except:
@@ -272,7 +277,7 @@ def get_reviews(recipe_id):
     else:
         reviews = Review.get_recipe_reviews_count_grouped_by_ids([int(recipe_id)])
         if reviews and reviews[int(recipe_id)]:
-            return make_response(jsonify({'data': reviews[int(recipe_id)] if reviews[int(recipe_id)] else False }), 200)
+            return make_response(jsonify({'data': reviews[int(recipe_id)] if reviews[int(recipe_id)] else None }), 200)
         else:
             return make_response(jsonify({'data': False, 'message': 'No reviews found.' }), 200)
 
@@ -299,12 +304,17 @@ def authorize():
     user = User.query.get(user_info['id'])
 
     # if the user does not resist
-    if not User.query.get(user_info['id']):
+    if not user:
         ### Add the user to the database
-        user = User(id=user_info['id'], name=user_info['name'], email=user_info['email'], picture=user_info['picture'])
+        user = User(
+            id=user_info['id'],
+            name=user_info['name'],
+            email=user_info['email'],
+            picture=user_info['picture']
+        )
         db.session.add(user)
         db.session.commit()
-    
+
     session['token'] = token
     session['user'] = user_info
     session['favorites']  = Favorite.filter_recipe_ids(user.favorites)
@@ -317,7 +327,13 @@ def authorize():
 def authenticate_current_user():
     """ Check if the current user session is authenticated, returns the a json object """
     user_id = User.is_current_user_authenticated()
-    return make_response(jsonify({'authenticated': bool(user_id), 'user': user_id if user_id else ''}), 200 if user_id else 400)
+    if user_id:
+        user = user_id
+        response_status = 200
+    else:
+        user = ''
+        response_status = 400
+    return make_response(jsonify({'authenticated': bool(user_id), 'user': user}), response_status)
 
 @app.route('/logout')
 def logout():

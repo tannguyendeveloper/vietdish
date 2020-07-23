@@ -19,7 +19,7 @@ class User(db.Model):
     __tablename__ = 'users'
     def __repr__(self):
         return f"<User id={self.id} name={self.name} email={self.email}>"
-    
+
     @staticmethod
     def is_current_user_authenticated():
         try:
@@ -47,19 +47,19 @@ class Review(db.Model):
     __tablename__ = 'reviews'
     def __repr__(self):
         return f"<Review id={self.id} user={self.user} recipe_id={self.recipe_id} rating={self.rating} review_text={self.review_text} date_created={self.date_created} date_updated={self.date_updated}>"
-    
+
     @staticmethod
     def get_recipe_reviews(args):
         page = int(args.get('page',1))
-        print(page)
         order_by = Review.date_created.desc() if args.get('order_by') == 'date' else Review.rating.desc()
         if args.get('rating') == 'all':
             reviews_query = Review.query.filter(Review.recipe_id == args.get('recipe_id')).order_by(order_by).paginate(page=page, max_per_page=20, error_out=False)
         else:
-            reviews_query = Review.query.filter(Review.recipe_id == args.get('recipe_id'), Review.rating == args.get('rating')).order_by(order_by).paginate(page=page, max_per_page=20, error_out=False)
-        print(reviews_query)
+            reviews_query = Review.query.filter(
+                Review.recipe_id == args.get('recipe_id'),
+                Review.rating == args.get('rating')
+            ).order_by(order_by).paginate(page=page, max_per_page=20, error_out=False)
         if len(reviews_query.items) > 0:
-            print(len(reviews_query.items))
             reviews = Review.map_reviews_to_dict(reviews_query.items)
             response = {
                 'recipe_id': args.get('recipe_id'),
@@ -81,7 +81,7 @@ class Review(db.Model):
         for review in reviews_list:
             reviews.append(Review.translate_review_to_dict(review))
         return reviews
-    
+
     @staticmethod
     def translate_review_to_dict(review):
         return dict({
@@ -96,7 +96,7 @@ class Review(db.Model):
             'date_created': review.date_created.strftime("%B %d, %Y"),
             'date_updated': review.date_updated.strftime("%B %d, %Y") if review.date_updated else False
         })
-    
+
     @staticmethod
     def get_recipe_reviews_count_grouped_by_ids(recipe_ids):
         reviews_query = db.session.query(
@@ -107,16 +107,19 @@ class Review(db.Model):
             func.count(Review.rating).filter(Review.rating == 2),
             func.count(Review.rating).filter(Review.rating == 3),
             func.count(Review.rating).filter(Review.rating == 4),
-            func.count(Review.rating).filter(Review.rating == 5))\
-            .group_by(Review.recipe_id)\
-            .filter(Review.recipe_id.in_(recipe_ids))\
-            .all()
+            func.count(Review.rating).filter(Review.rating == 5)
+        ).group_by(
+            Review.recipe_id
+        ).filter(
+            Review.recipe_id.in_(recipe_ids)
+        ).all()
+
         reviews_query = (map(Review.map_review_count_list_to_dict, reviews_query))
         ratings = {}
         for rating in reviews_query:
             ratings[rating['id']] = dict(rating['data'])
         return ratings
-    
+
     @staticmethod
     def map_review_count_list_to_dict(ratings_list):
         return dict({
@@ -135,20 +138,26 @@ class Review(db.Model):
         })
 
     @staticmethod
-    def if_user_has_review(user_id, recipe_id):
+    def user_has_review(user_id, recipe_id):
         try:
-            reviews_query = Review.query.filter(Review.user_id == user_id, Review.recipe_id == recipe_id).first()
-            return True if reviews_query.id else False
+            reviews_query = Review.query.filter(
+                Review.user_id == user_id,
+                Review.recipe_id == recipe_id
+            ).first()
+            return bool(reviews_query.id)
         except:
             return False
 
     @staticmethod
     def get_user_review(user_id, recipe_id):
         try:
-            review = Review.query.filter(Review.user_id == user_id, Review.recipe_id == recipe_id).first()
-            return Review.translate_review_to_dict(review) if review.id else False
+            review = Review.query.filter(
+                Review.user_id == user_id,
+                Review.recipe_id == recipe_id
+            ).first()
+            return Review.translate_review_to_dict(review) if review.id else None
         except:
-            return False
+            return None
 
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -168,7 +177,7 @@ class Favorite(db.Model):
 
     @staticmethod
     def filter_recipe_ids(favorites):
-        return list(favorite.__dict__.get('recipe_id') for favorite in favorites)
+        return [favorite.__dict__.get('recipe_id') for favorite in favorites]
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     recipe_id = db.Column(db.Integer, nullable=False)
@@ -176,4 +185,3 @@ class Favorite(db.Model):
     date = db.Column(DateTime(timezone=True), server_default=func.now())
     user = db.relationship('User', backref='favorites')
 
-    

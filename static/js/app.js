@@ -7,7 +7,7 @@ $(document).ready(function() {
 
     const app = new VietDishApp();
 
-}) 
+})
 
 class VietDishApp {
     constructor() {
@@ -27,13 +27,11 @@ class VietDishApp {
     initSignUpModal() {
         const signUpModalLinks = document.querySelectorAll('.sign-up-modal');
         const signUpModal = document.querySelector('#sign-up-modal')
-        if(signUpModalLinks) {
-            if(signUpModalLinks && signUpModal) {
-                for(const link of signUpModalLinks) {
-                    link.addEventListener('click', function() {
-                        $(signUpModal).modal('show')
-                    })
-                }
+        if(signUpModalLinks && signUpModal) {
+            for(const link of signUpModalLinks) {
+                link.addEventListener('click', function() {
+                    $(signUpModal).modal('show')
+                })
             }
         }
     }
@@ -101,7 +99,7 @@ class VietDishApp {
                         reviewsPopup.updateReviewBreakdown();
                     }
                 })
-            }    
+            }
         }
     }
     initUserRatings() {
@@ -124,7 +122,7 @@ class VietDishApp {
                 reviewModalLink.addEventListener('click', function(e) {
                     modal.show()
                 })
-            }    
+            }
         }
     }
     initRecipeReviewsListing() {

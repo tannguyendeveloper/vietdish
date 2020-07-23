@@ -14,16 +14,16 @@ export default class RecipeReviewsListing {
     }
     renderReviewListing(review) {
         console.log(review);
-        
+
         const reviewComment = document.createElement('div');
-        reviewComment.classList.add('comment')
-        
+        reviewComment.classList.add('comment');
+
         const avatar = document.createElement('a');
         avatar.classList.add('avatar')
-        
+
         const image = document.createElement('img');
         image.src = review.user.picture;
-        
+
         avatar.append(image)
 
         const content = document.createElement('div');
