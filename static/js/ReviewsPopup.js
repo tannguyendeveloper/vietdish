@@ -11,7 +11,7 @@ export default class ReviewsPopup {
         breakdown.dataset.recipeId = this.recipe_id;
         breakdown.dataset.maxRating = i;
         breakdown.dataset.rating = i;
-        
+
         const ratingCountPercent = document.createElement('div');
         ratingCountPercent.innerHTML = pct;
         ratingCountPercent.classList.add('rating-count-percent');
@@ -22,7 +22,7 @@ export default class ReviewsPopup {
         this.content.classList.add('loading')
         const response = await fetch(`/api/reviews/${this.recipe_id}/?count=true`);
         const responseJson = await response.json();
-        return responseJson.data ? responseJson.data : false;
+        return responseJson.data;
     }
     async updateReviewBreakdown() {
         const ratingObj = await this.getReviewBreakdown();
@@ -32,7 +32,7 @@ export default class ReviewsPopup {
         if(ratingObj) {
             let popUpLinkInnerHTML;
             const userRating = document.querySelector(`.user-rating[data-recipe-id="${this.recipe_id}"]`)
-            if(userRating.dataset.rating  != ratingObj.avg) { 
+            if(userRating.dataset.rating  != ratingObj.avg) {
                 $(userRating).rating('set rating', ratingObj.avg);
             }
             if(ratingObj.count != 0) {

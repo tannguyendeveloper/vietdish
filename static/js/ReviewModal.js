@@ -59,7 +59,7 @@ export default class ReviewModal {
         modal.append(header, content, actions);
 
         document.body.append(modal);
-        
+
         this.initTinyMCE();
         this.initRating();
         this.initModal();
@@ -71,7 +71,7 @@ export default class ReviewModal {
         this.approveBtn.classList.add('disabled')
     }
     isValid() {
-        return this.rating && this.chars <= 500  && this.chars > 0 ? true : false
+        return this.rating && this.chars <= 500  && this.chars > 0
     }
     checkValid() {
         if(this.isValid()) {
@@ -83,7 +83,7 @@ export default class ReviewModal {
     async getReview() {
         const responseObj =  await fetch(`/api/reviews/${this.id}/?current_user=true`);
         const responseData = await responseObj.json();
-        return responseData.data ? responseData.data : false
+        return responseData.data
     }
     async submitReview() {
         const recipe_id = this.recipe_id;
@@ -169,7 +169,7 @@ export default class ReviewModal {
             this.rating.rating('set rating', review.rating);
             this.tinymce.get(this.textAreaId).setContent(review.review_text)
         }
-        if(isAuthenticated) { 
+        if(isAuthenticated) {
             $(this.modal).modal('show')
         }
     }
