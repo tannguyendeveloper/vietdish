@@ -142,3 +142,6 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+api_key.py
+spoonacular_cache.sqlite

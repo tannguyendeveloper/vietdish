@@ -3,9 +3,9 @@ import requests_cache
 import math
 from api_key import API_KEY
 
-requests_cache.install_cache(cache_name='spoonacular_cache', backend='sqlite',expire_after=3600)
-PER_PAGE = 24
-OFFSET = 24
+requests_cache.install_cache(cache_name='spoonacular_cache', backend='sqlite', expire_after=3600)
+PER_PAGE = 12
+OFFSET = 12
 
 class Spoonacular:
 
